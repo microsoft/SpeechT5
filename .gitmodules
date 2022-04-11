@@ -1,0 +1,3 @@
+[submodule "SpeechT5/fairseq"]
+	path = SpeechT5/fairseq
+	url = https://github.com/pytorch/fairseq
