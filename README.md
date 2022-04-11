@@ -19,7 +19,7 @@ Model introductions, evaluation results, and model inference instructions are lo
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
 | :------: | :----------------------------------------------: | :-----------------: | :-----: |
-| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | Coming  |
+| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/uc?export=download&id=1UAXFWACwIeu9JQINtMrY3iAoWMNQCvMp)  |
 | SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | Coming  |
 
 
