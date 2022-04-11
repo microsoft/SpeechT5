@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+# --------------------------------------------------------
+# SpeechT5: Unified-Modal Encoder-Decoder Pre-Training for Spoken Language Processing (https://arxiv.org/abs/2110.07205)
+# Github source: https://github.com/microsoft/SpeechT5/tree/main/SpeechT5
+# Copyright (c) 2021 Microsoft
+# Licensed under The MIT License [see LICENSE for details]
+# Based on fairseq and espnet code bases
+# https://github.com/pytorch/fairseq; https://github.com/espnet/espnet
+# --------------------------------------------------------
 
 import logging
 from ast import literal_eval
