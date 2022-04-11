@@ -7,7 +7,7 @@ Motivated by the success of T5 (Text-To-Text Transfer Transformer) in pre-traine
 The SpeechT5 framework consists of a shared encoder-decoder network and six modal-specific (speech/text) pre/post-nets. 
 After preprocessing the input speech/text through the pre-nets, the shared encoder-decoder network models the sequence-to-sequence transformation, and then the post-nets generate the output in the speech/text modality based on the output of the decoder.
 
-<img src="speecht5/speecht5_framework.png" alt="se" width="1000" />
+<img src="SpeechT5/speecht5_framework.png" alt="se" width="1000" />
 
 Leveraging large-scale unlabeled speech and text data, we pre-train SpeechT5 to learn a unified-modal representation, hoping to improve the modeling capability for both speech and text.
 To align the textual and speech information into this unified semantic space, we propose a cross-modal vector quantization approach that randomly mixes up speech/text states with latent units as the interface between encoder and decoder.
