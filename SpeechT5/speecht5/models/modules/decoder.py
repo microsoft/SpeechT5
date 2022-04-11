@@ -1,3 +1,12 @@
+# --------------------------------------------------------
+# SpeechT5: Unified-Modal Encoder-Decoder Pre-Training for Spoken Language Processing (https://arxiv.org/abs/2110.07205)
+# Github source: https://github.com/microsoft/SpeechT5/tree/main/SpeechT5
+# Copyright (c) 2021 Microsoft
+# Licensed under The MIT License [see LICENSE for details]
+# Based on fairseq and espnet code bases
+# https://github.com/pytorch/fairseq; https://github.com/espnet/espnet
+# --------------------------------------------------------
+
 from typing import Any, Dict, List, Optional
 
 import torch
@@ -280,26 +289,6 @@ class TransformerDecoder(FairseqIncrementalDecoder):
 
     def upgrade_state_dict_named(self, state_dict, name):
         """Upgrade a (possibly old) state dict for new versions of fairseq."""
-        # if isinstance(self.embed_positions, SinusoidalPositionalEmbedding):
-        #     weights_key = "{}.embed_positions.weights".format(name)
-        #     if weights_key in state_dict:
-        #         del state_dict[weights_key]
-        #     state_dict[
-        #         "{}.embed_positions._float_tensor".format(name)
-        #     ] = torch.FloatTensor(1)
-
-        # if f"{name}.output_projection.weight" not in state_dict:
-        #     if self.share_input_output_embed:
-        #         embed_out_key = f"{name}.embed_tokens.weight"
-        #     else:
-        #         embed_out_key = f"{name}.embed_out"
-        #     if embed_out_key in state_dict:
-        #         state_dict[f"{name}.output_projection.weight"] = state_dict[
-        #             embed_out_key
-        #         ]
-        #         if not self.share_input_output_embed:
-        #             del state_dict[embed_out_key]
-
         for i in range(self.num_layers):
             # update layer norms
             layer_norm_map = {
