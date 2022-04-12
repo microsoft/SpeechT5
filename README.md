@@ -109,7 +109,7 @@ Evaluation on the [WSJ0 Hipster AmbientMixtures (WHAM!)](http://wham.whisper.ai/
 
 Evaluation on the [VoxCeleb1](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox1.html)
 
-| Model                          | WER          | 
+| Model                          | Acc          | 
 | -------------                  |------------  | 
 | SUPERB, wav2vec 2.0 Base       | 75.18%         | 
 | SUPERB, HuBERT Base       | 81.42%        | 
