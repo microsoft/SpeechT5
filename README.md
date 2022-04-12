@@ -19,8 +19,8 @@ Model introductions, evaluation results, and model inference instructions are lo
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
 | :------: | :----------------------------------------------: | :-----------------: | :-----: |
-| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/uc?export=download&id=1UAXFWACwIeu9JQINtMrY3iAoWMNQCvMp)  |
-| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/uc?export=download&id=1zDNKYXQG91fqtSmlRBOjvZzjx7WbRLpP)  |
+| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/file/d/1Sq00uZ1pw6Z4OUaqhOWzQEJxIVWgAO5U/view?usp=sharing)  |
+| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/file/d/1qLKJ81JPWOGf1MHfjSmgtZyqqTqgI6kT/view?usp=sharing)  |
 | SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | Coming  |
 
 ## Language Model and Vocabulary
@@ -146,4 +146,4 @@ If you find our work is useful in your research, please cite the following paper
 
 For help or issues using SpeechT5 models, please submit a GitHub issue.
 
-For other communications related to SpeechT5, please contact Long Zhou (`Long.Zhou@microsoft.com`).
+For other communications related to SpeechT5, please contact Long Zhou (`lozhou@microsoft.com`).

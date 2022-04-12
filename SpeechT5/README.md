@@ -7,6 +7,7 @@
 Official PyTorch implementation and pretrained models of SpeechT5
 
 - Oct 2021: release preprint in [arXiv](https://arxiv.org/abs/2110.07205)
+- Feb 2022: accpted by [ACL 2022](https://www.2022.aclweb.org/)
 
 ## Setup
 ```
@@ -228,4 +229,4 @@ If you find our work is useful in your research, please cite the following paper
 
 For help or issues using SpeechT5 models, please submit a GitHub issue.
 
-For other communications related to SpeechT5, please contact Long Zhou (`Long.Zhou@microsoft.com`).
+For other communications related to SpeechT5, please contact Long Zhou (`lozhou@microsoft.com`).
