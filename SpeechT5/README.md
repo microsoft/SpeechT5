@@ -8,9 +8,20 @@ Official PyTorch implementation and pretrained models of SpeechT5
 
 - Oct 2021: release preprint in [arXiv](https://arxiv.org/abs/2110.07205)
 
+## Data Preparation
 
-## Pre-training
+### Speech data and S2T Data
+Please follow the steps for preparing wav2vec 2.0 manifest in [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest). 
 
+We add a third column for the speaker embedding, which is provided in [here](https://drive.google.com/uc?export=download&id=16QOUURZBrW7-GYbVG_gXt3mTMlZmQoH0).
+It includes the speaker embeddings for 960hr training data and dev-other data of LibriSpeech.
+
+We also provide example manifests for your reference in [here](https://drive.google.com/drive/folders/1Ja08XjOHe6vP8lZtLVrJM8173aPQCR_y?usp=sharing).
+
+### Text Data
+Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the text data.
+
+## Pre-Training
 
 ### 960hr LibriSpeech + LibriSpeech-LM
 
