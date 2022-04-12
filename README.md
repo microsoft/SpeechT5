@@ -84,10 +84,10 @@ Evaluation on the [CMU Arctic](http://www.festvox.org/cmu_arctic/)
 | Model            | WER        | WER         | MCD          | MCD          |
 | -------------    | ------    | -----   | ----    |  ----|
 |                  | bdl to slt | clb to slt  | bdl to slt   | clb to slt   |
-| VTN w/ ASR       |  11.1%    | 10.9%   | 6.5     | 6.11 |
-| VTN w/ TTS       |  7.6% 	   | 9.1%    | 6.33    | 13.3 |
+| VTN w/ ASR       |  11.1    | 10.9   | 6.5     | 6.11 |
+| VTN w/ TTS       |  7.6 	   | 9.1    | 6.33    | 13.3 |
 | Many-to-many VTN |  -        | -	     | 6.13    | 5.97 |
-| Baseline         |  21.5%	   | 10.8%   | 6.26    | 6.16 |
+| Baseline         |  21.5   | 10.8   | 6.26    | 6.16 |
 | **SpeechT5**     |  **7.8**  | **6.4** | **5.93**| **5.87** |
 
 
@@ -99,10 +99,10 @@ Evaluation on the [WSJ0 Hipster AmbientMixtures (WHAM!)](http://wham.whisper.ai/
 
 | Model                | WER        | 
 | -------------        |------------  | 
-| Ground Truth Speech  | 3.2%        | 
-| Noisy Speech         | 76.1%        | 
-| Baseline             | 10.9%        | 
-| **SpeechT5**         | **8.9%**    |
+| Ground Truth Speech  | 3.2        | 
+| Noisy Speech         | 76.1        | 
+| Baseline             | 10.9        | 
+| **SpeechT5**         | **8.9**    |
 
 
 ### Speaker Identification
