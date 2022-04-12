@@ -7,7 +7,7 @@
 Official PyTorch implementation and pretrained models of SpeechT5
 
 - Oct 2021: release preprint in [arXiv](https://arxiv.org/abs/2110.07205)
-- Feb 2022: accpted by [ACL 2022](https://www.2022.aclweb.org/)
+- Feb 2022: accepted by [ACL 2022](https://www.2022.aclweb.org/)
 
 ## Setup
 ```
