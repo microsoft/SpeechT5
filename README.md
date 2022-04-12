@@ -23,6 +23,10 @@ Model introductions, evaluation results, and model inference instructions are lo
 | SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/uc?export=download&id=1zDNKYXQG91fqtSmlRBOjvZzjx7WbRLpP)  |
 | SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | Coming  |
 
+## Language Model and Vocabulary
+|  Model   |  Dataset | Model | Vocabulary |
+| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+| SpeechT5 Large | [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [LM Model](https://drive.google.com/uc?export=download&id=1y0TGnKAMKUW5C8l8yrvGjh9RRZETPdv7)  | [Vocabulary](https://drive.google.com/uc?export=download&id=19hcQ58RHZ6CssxF8Qp6yEF1NW_AXxObK) |
 
 ## Downstream Task Performance
 
