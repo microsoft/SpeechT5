@@ -8,6 +8,14 @@ Official PyTorch implementation and pretrained models of SpeechT5
 
 - Oct 2021: release preprint in [arXiv](https://arxiv.org/abs/2110.07205)
 
+## Setup
+```
+cd SpeechT5/
+git submodule update --init fairseq
+pip install --editable fairseq/
+pip install espnet
+```
+
 ## Data Preparation
 
 ### Speech data and S2T Data
@@ -197,7 +205,7 @@ fairseq-generate ${DATA_ROOT} \
 ## License
 
 This project is licensed under the license found in the LICENSE file in the root directory of this source tree.
-Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq) project.
+Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq) and [ESPnet](https://github.com/espnet/espnet) projects.
 
 [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct)
 
