@@ -1277,7 +1277,7 @@ def base_architecture(args):
     args.decoder_max_relative_position = getattr(args, "decoder_max_relative_position", 160)
 
 @register_model_architecture("t5_transformer", "t5_transformer_base")
-def t5_transformer_hubert_ori_2(args):
+def t5_transformer_base(args):
     args.use_conv_pos = getattr(args, "use_conv_pos", True)
     args.use_sinc_pos = getattr(args, "use_sinc_pos", True)
     args.layernorm_embedding = getattr(args, "layernorm_embedding", False)
@@ -1291,4 +1291,26 @@ def t5_transformer_hubert_ori_2(args):
     args.encoder_layerdrop = getattr(args, "encoder_layerdrop", 0.05)
     args.decoder_layerdrop = getattr(args, "decoder_layerdrop", 0.05)
     args.mask_prob = getattr(args, "mask_prob", 0.80)
+    base_architecture(args)
+
+@register_model_architecture("t5_transformer", "t5_transformer_base_asr")
+def t5_transformer_base_asr(args):
+    args.use_conv_pos = getattr(args, "use_conv_pos", True)
+    args.use_sinc_pos = getattr(args, "use_sinc_pos", True)
+    args.encoder_normalize_before = getattr(args, "encoder_normalize_before", False)
+    args.decoder_normalize_before = getattr(args, "decoder_normalize_before", False)
+    args.layer_norm_first = getattr(args, "layer_norm_first", False)
+    args.relative_position_embedding = getattr(args, "relative_position_embedding", True)
+    args.dropout = getattr(args, "dropout", 0.1)
+    args.activation_dropout = getattr(args, "activation_dropout", 0.1)
+    args.attention_dropout = getattr(args, "attention_dropout", 0.1)
+    args.feature_grad_mult = getattr(args, "feature_grad_mult", 0.0)
+    args.encoder_layerdrop = getattr(args, "encoder_layerdrop", 0.1)
+    args.decoder_layerdrop = getattr(args, "decoder_layerdrop", 0.1)
+    args.mask_prob = getattr(args, "mask_prob", 0.75)
+    args.mask_selection = getattr(args, "mask_selection", "static")
+    args.mask_channel_length = getattr(args, "mask_channel_length", 64)
+    args.mask_channel_prob = getattr(args, "mask_channel_prob", 0.5)
+    args.mask_channel_selection = getattr(args, "mask_channel_selection", "static")
+    args.max_text_positions = getattr(args, "max_text_positions", 600)
     base_architecture(args)
