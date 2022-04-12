@@ -123,7 +123,7 @@ Evaluation on the [VoxCeleb1](https://www.robots.ox.ac.uk/~vgg/data/voxceleb/vox
 ## License
 
 This project is licensed under the license found in the LICENSE file in the root directory of this source tree.
-Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq) project.
+Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq) and [ESPnet](https://github.com/espnet/espnet) projects.
 
 [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct)
 
