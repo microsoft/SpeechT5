@@ -81,15 +81,106 @@ fairseq-train ${DATA_ROOT} \
 
 ### ASR
 
-### TTS 
+#### Training
 
-### ST
+```
+DATA_ROOT=
+SAVE_DIR=
+TRAIN_SET=
+VALID_SET=
+LABEL_DIR=
+BPE_TOKENIZER=
+USER_DIR=
 
-### VC 
+mkdir -p ${SAVE_DIR}
+fairseq-train ${DATA_ROOT} \
+  --save-dir ${SAVE_DIR} \
+  --tensorboard-logdir ${SAVE_DIR} \
+  --train-subset ${TRAIN_SET} \
+  --valid-subset ${VALID_SET} \
+  --hubert-label-dir ${LABEL_DIR} \
+  --distributed-world-size 1 \
+  --distributed-port 0 \
+  --ddp-backend legacy_ddp \
+  --user-dir ${USER_DIR} \
+  --log-format json \
+  --seed 1337 \
+  --fp16 \
+  \
+  --task speecht5 \
+  --t5-task s2t \
+  --sample-rate 16000 \
+  --num-workers 0 \
+  --max-tokens 1600000 \
+  --update-freq 2 \
+  --bpe-tokenizer ${BPE_TOKENIZER} \
+  \
+  --criterion speecht5 \
+  --report-accuracy \
+  --zero-infinity \
+  --ce-weight 0.5 \
+  --ctc-weight 0.5 \
+  --sentence-avg \
+  \
+  --optimizer adam \
+  --reset-optimizer \
+  --adam-betas "(0.9, 0.98)" \
+  --adam-eps 1e-08 \
+  --weight-decay 0.1 \
+  --clip-norm 25.0 \
+  --lr 0.00006 \
+  --lr-scheduler tri_stage \
+  --phase-ratio "[0.1, 0.4, 0.5]" \
+  --final-lr-scale 0.05 \
+  \
+  --max-update 80000 \
+  --max-text-positions 600 \
+  --required-batch-size-multiple 1 \
+  --save-interval-updates 3000 \
+  --skip-invalid-size-inputs-valid-test \
+  \
+  --arch t5_transformer_base_asr \
+  --share-input-output-embed \
+  --find-unused-parameters \
+  --bert-init \
+  --relative-position-embedding \
+  --freeze-encoder-updates 13000 \
+```
 
-### SID
+#### Inference
+Note that joint CTC/Decoder inference is only supported when batch size is 1.
 
-## SE
+```
+CHECKPOINT_PATH=
+DATA_ROOT=
+SUBSET=
+BPE_TOKENIZER=
+LABEL_DIR=
+USER_DIR=
+BEAM=
+MAX_TOKENS=
+CTC_WEIGHT=
+LM_WEIGHT=
+LM_PATH=
+
+fairseq-generate ${DATA_ROOT} \
+  --gen-subset ${SUBSET} \
+  --bpe-tokenizer ${BPE_TOKENIZER} \
+  --user-dir ${USER_DIR} \
+  --task speecht5 \
+  --t5-task s2t \
+  --path ${CHECKPOINT_PATH} \
+  --hubert-label-dir ${LABEL_DIR} \
+  --ctc-weight 
+  --lm-weight ${LM_WEIGHT} \
+  --lm-path ${LM_PATH} \
+  --max-tokens ${MAX_TOKENS} \
+  --beam ${BEAM} \
+  --scoring wer \
+  --max-len-a 0 \
+  --max-len-b 620 \
+  --sample-rate 16000
+```
 
 
 ## License
