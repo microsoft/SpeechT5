@@ -26,7 +26,7 @@ Model introductions, evaluation results, and model inference instructions are lo
 ## Language Model and Vocabulary
 |  Model   |  Dataset | Model | Vocabulary | SPM Model |
 | :------: | :------: | :---: | :--------: | :-------: |
-| SpeechT5 Large | [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [LM Model](https://drive.google.com/uc?export=download&id=1y0TGnKAMKUW5C8l8yrvGjh9RRZETPdv7)  | [Vocabulary](https://drive.google.com/uc?export=download&id=19hcQ58RHZ6CssxF8Qp6yEF1NW_AXxObK) | [SPM Model](https://drive.google.com/uc?export=download&id=1wClgQjXXoU2lmpbaEa1v2SqMbg7cAutq) |
+| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [LM Model](https://drive.google.com/uc?export=download&id=1y0TGnKAMKUW5C8l8yrvGjh9RRZETPdv7)  | [Vocabulary](https://drive.google.com/uc?export=download&id=19hcQ58RHZ6CssxF8Qp6yEF1NW_AXxObK) | [SPM Model](https://drive.google.com/uc?export=download&id=1wClgQjXXoU2lmpbaEa1v2SqMbg7cAutq) |
 
 ## Downstream Task Performance
 
