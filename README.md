@@ -137,7 +137,7 @@ If you find our work is useful in your research, please cite the following paper
   author  = {Junyi Ao and Rui Wang and Long Zhou and Chengyi Wang and Shuo Ren and Yu Wu and Shujie Liu and Tom Ko and Qing Li and Yu Zhang and Zhihua Wei and Yao Qian and Jinyu Li and Furu Wei},
   eprint={2110.07205},
   archivePrefix={arXiv},
-  primaryClass={cs.CL},
+  primaryClass={eess.AS},
   year={2021}
 }
 ```
