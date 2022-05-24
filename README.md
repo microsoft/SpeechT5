@@ -2,7 +2,7 @@
 
 
 > [**SpeechT5**](https://arxiv.org/abs/2110.07205) (```ACL 2022```): **SpeechT5: Unified-Modal Encoder-Decoder Pre-training for Spoken Language Processing**
-> 
+
 > [**Speech2C**](https://arxiv.org/abs/2203.17113) (```INTERSPEECH 2022 Submission```): **Pre-Training Transformer Decoder for End-to-End ASR Model with Unpaired Speech Data**
 
 Motivated by the success of T5 (Text-To-Text Transfer Transformer) in pre-trained natural language processing models, we propose a unified-modal SpeechT5 framework that explores the encoder-decoder pre-training for self-supervised speech/text representation learning.
