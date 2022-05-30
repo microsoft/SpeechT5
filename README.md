@@ -3,6 +3,8 @@
 
 > [**SpeechT5**](https://arxiv.org/abs/2110.07205) (```ACL 2022```): **SpeechT5: Unified-Modal Encoder-Decoder Pre-training for Spoken Language Processing**
 
+> [**Speech2C**](https://arxiv.org/abs/2203.17113) (```INTERSPEECH 2022 Submission```): **Pre-Training Transformer Decoder for End-to-End ASR Model with Unpaired Speech Data**
+
 Motivated by the success of T5 (Text-To-Text Transfer Transformer) in pre-trained natural language processing models, we propose a unified-modal SpeechT5 framework that explores the encoder-decoder pre-training for self-supervised speech/text representation learning.
 The SpeechT5 framework consists of a shared encoder-decoder network and six modal-specific (speech/text) pre/post-nets. 
 After preprocessing the input speech/text through the pre-nets, the shared encoder-decoder network models the sequence-to-sequence transformation, and then the post-nets generate the output in the speech/text modality based on the output of the decoder.
@@ -40,14 +42,14 @@ Evaluation on the [LibriSpeech](http://www.openslr.org/12)
 | ------------- |-------------      | ------| ----- | ----|  ----|
 | wav2vec2.0 Base          | -      | 6.1   | 13.5  | 6.1 | 13.3 |
 | HuBERT Base              | -      | 5.5	| 13.1  | 5.8 | 13.3 |
-| Baseline (w/o CTC) (XLSR)| -      | 5.8   | 12.3	| 6.2 | 12.3 |
+| Baseline (w/o CTC) | -      | 5.8   | 12.3	| 6.2 | 12.3 |
 | Baseline                 | -      | 4.9	| 11.7  | 5.0 | 11.9 |
 | SpeechT5 (w/o CTC)   | -      | 5.4	| 10.7  | 5.8 | 10.7 |
 | **SpeechT5**             | -      | **4.3**	| **10.3**  | **4.4** | **10.4** |
 | DiscreteBERT             | 4-gram | 4.0   |10.9   |4.5  |12.1  |
 | wav2vec 2.0 Base         | 4-gram | 2.7   |7.9    |3.4  |8.0   |
 | HuBERT Base              | 4-gram	| 2.7   |7.8    |3.4  |8.1   |
-| wav2vec 2.0 Base large   | Transf. | 2.2   |6.3    |2.6  |6.3   |
+| wav2vec 2.0 Base   | Transf. | 2.2   |6.3    |2.6  |6.3   |
 | Baseline                 | Transf. | 2.3   |6.3    |2.5  |6.3   |
 | **SpeechT5**             | Transf. | **2.1**   |**5.5**    |**2.4**  |**5.8**   |
 
@@ -137,8 +139,19 @@ If you find our work is useful in your research, please cite the following paper
   author  = {Junyi Ao and Rui Wang and Long Zhou and Chengyi Wang and Shuo Ren and Yu Wu and Shujie Liu and Tom Ko and Qing Li and Yu Zhang and Zhihua Wei and Yao Qian and Jinyu Li and Furu Wei},
   eprint={2110.07205},
   archivePrefix={arXiv},
-  primaryClass={cs.CL},
+  primaryClass={eess.AS},
   year={2021}
+}
+```
+
+```bibtex
+@article{Ao2022Speech2C,
+  title   = {Pre-Training Transformer Decoder for End-to-End ASR Model with Unpaired Speech Data},
+  author  = {Junyi Ao and Ziqiang Zhang and Long Zhou and Shujie Liu and Haizhou Li and Tom Ko and Lirong Dai and Jinyu Li and Yao Qian and Furu Wei},
+  eprint={2203.17113},
+  archivePrefix={arXiv},
+  primaryClass={cs.SD},
+  year={2022}
 }
 ```
 
