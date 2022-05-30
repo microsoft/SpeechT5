@@ -28,7 +28,7 @@
 | wav2vec 2.0 Base         | 4-gram | 4.3  |9.5   |
 | wav2vec 2.0 Base   | Transf. |3.2  |7.8   |
 | HuBERT Base              | 4-gram	|4.3 |9.4   |
-| **Speech2C**              | Transf.     | **3.1** | **7.0** |
+| **Speech2C**              | **Transf.**     | **3.1** | **7.0** |
 
 ### Evaluation on the [LibriSpeech](http://www.openslr.org/12) 100hr subset
 
