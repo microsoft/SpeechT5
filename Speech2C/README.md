@@ -18,7 +18,7 @@
 
 ## Setup
 ```
-cd SpeechT5/
+cd Speech2C/
 git submodule update --init fairseq
 pip install --editable fairseq/
 pip install espnet
