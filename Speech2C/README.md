@@ -6,7 +6,7 @@
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
 | :------: | :----------------------------------------------: | :-----------------: | :-----: |
-| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          |   |
+| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [Google Drive](https://drive.google.com/file/d/1nGZ0LWEwlLq2pz7o805YALsMr9irV0Za/view?usp=sharing)  |
 | Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [10 hrs LibriSpeech](http://www.openslr.org/12) |   |
 | Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) |   |
 
