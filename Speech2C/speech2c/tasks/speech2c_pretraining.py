@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from fairseq.data import Dictionary
 from fairseq.tasks import register_task
 from fairseq.tasks.hubert_pretraining import HubertPretrainingConfig, HubertPretrainingTask, LabelEncoder
-from data.speech2c_dataset import Speech2cDataset
+from speech2c.data.speech2c_dataset import Speech2cDataset
 
 logger = logging.getLogger(__name__)
 
