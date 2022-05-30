@@ -28,7 +28,7 @@ It includes the speaker embeddings for 960hr training data and dev-other data of
 We also provide example manifests for your reference in [here](https://drive.google.com/drive/folders/1Ja08XjOHe6vP8lZtLVrJM8173aPQCR_y?usp=sharing).
 
 ### Text Data
-Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the text data.
+Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data.
 
 ## Pre-Training
 
