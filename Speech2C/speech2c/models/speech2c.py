@@ -7,13 +7,15 @@ from dataclasses import dataclass, field
 from fairseq.data.dictionary import Dictionary
 from fairseq.models import register_model
 from fairseq.models.hubert import HubertConfig, HubertModel
-from fairseq.models.speech_to_text.s2t_transformer import TransformerDecoderScriptable
 from fairseq.models.transformer import Embedding
 from torch import Tensor
-from tasks.speech2c_pretraining import (
+from speech2c.tasks.speech2c_pretraining import (
     Speech2cPretrainingConfig,
     Speech2cPretrainingTask,
 )
+
+from speech2c.models.modules.transformer_decoder import TransformerDecoderScriptable
+from speech2c.models.modules.transformer_encoder import TransformerEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +82,20 @@ class Speech2cConfig(HubertConfig):
         metadata={"help": "decoder dictionary dimension, only used for fine-tuning"},
     )
 
+    # FP16 optimization
+    required_seq_len_multiple: int = field(
+        default=1,
+        metadata={
+            "help": "pad the input to encoder such that the sequence length is divisible by multiple"
+        },
+    )
+    crop_seq_to_multiple: int = field(
+        default=1,
+        metadata={
+            "help": "crop convolutional feature extractor output such that the sequence length is divisible by multiple"
+        },
+    )
+
 
 @register_model("speech2c", dataclass=Speech2cConfig)
 class Speech2cModel(HubertModel):
@@ -89,8 +105,10 @@ class Speech2cModel(HubertModel):
         task_cfg: Speech2cPretrainingConfig,
         dictionaries: List[Dictionary],
     ) -> None:
-        super().__init__(cfg, task_cfg)
+        super().__init__(cfg, task_cfg, dictionaries)
         logger.info(f"Speech2cModel Config: {cfg}")
+
+        self.encoder = TransformerEncoder(cfg)
 
         self.add_decoder = task_cfg.add_decoder
         if task_cfg.add_decoder:
