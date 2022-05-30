@@ -16,6 +16,30 @@
 | :------: | :------: | :---: | :--------: |
 | LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) |  |  |
 
+## Setup
+```
+cd SpeechT5/
+git submodule update --init fairseq
+pip install --editable fairseq/
+pip install espnet
+```
+
+## Data Preparation
+Please follow the steps of data preparation for HuBERT in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert#data-preparation).
+
+## Pre-Training
+```
+DATA_DIR=
+LABEL_DIR=
+FAIRSEQ_PATH=
+
+python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
+  --config-dir speech2c/config \
+  --config-name speech2c_base_librispeech \
+  task.data=${DATA_DIR} task.label_dir=${LABEL_DIR} task.labels='["km"]' \
+  model.label_rate=50 common.user_dir=SpeechT5/Speech2C/speech2c \
+```
+
 ## Results on Librispeech
 
 ### Evaluation on the [LibriSpeech](http://www.openslr.org/12) 10hr subset
@@ -47,6 +71,12 @@
 | Baseline                 | Transf. | 2.5  |6.3   |
 | **Speech2C**                 | **Transf.** | **2.4**  |**5.2**   |
 
+## License
+
+This project is licensed under the license found in the LICENSE file in the root directory of this source tree.
+Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq).
+
+[Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct)
 
 ## Reference
 
