@@ -1,4 +1,5 @@
 import logging
+import copy
 import contextlib
 from typing import Dict, List, Optional, Tuple
 
@@ -118,14 +119,15 @@ class Speech2cModel(HubertModel):
                 return Embedding(num_embeddings, embed_dim, padding_idx)
 
             # To make sure that the decoder dict size is the same as the fine-tuning tgt_dict size
+            cut_dictionary = copy.deepcopy(dictionaries[0])
             if cfg.decoder_dict_size != -1:
-                dictionaries[0].symbols = dictionaries[0].symbols[:cfg.decoder_dict_size]
+                cut_dictionary.symbols = cut_dictionary.symbols[:cfg.decoder_dict_size]
 
             decoder_embed_tokens = build_embedding(
-                dictionaries[0], cfg.decoder_embed_dim
+                cut_dictionary, cfg.decoder_embed_dim
             )
 
-            self.decoder = TransformerDecoderScriptable(cfg, dictionaries[0], decoder_embed_tokens)
+            self.decoder = TransformerDecoderScriptable(cfg, cut_dictionary, decoder_embed_tokens)
 
 
     @classmethod
