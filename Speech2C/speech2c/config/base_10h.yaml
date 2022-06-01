@@ -8,6 +8,8 @@ common:
   seed: 1337
 
 checkpoint:
+  save_interval: 5
+  keep_interval_updates: 1
   no_epoch_checkpoints: true
   best_checkpoint_metric: dec_accuracy
   maximize_best_checkpoint_metric: true
@@ -35,7 +37,9 @@ dataset:
   num_workers: 6
   max_tokens: 3200000
   skip_invalid_size_inputs_valid_test: true
-  train_subset: train_100h
+  validate_after_updates: ${model.freeze_finetune_updates}
+  validate_interval: 5
+  train_subset: train_10h
   valid_subset: dev_other
 
 criterion:
@@ -43,8 +47,8 @@ criterion:
   zero_infinity: true
 
 optimization:
-  max_update: 80000
-  lr: [0.00004]
+  max_update: 25000
+  lr: [2e-5]
   sentence_avg: true
   update_freq: [1]
 
@@ -62,14 +66,21 @@ model:
   _name: speech2c_ctc
   w2v_path: ???
   apply_mask: true
-  mask_prob: 0.65
-  mask_channel_prob: 0.5
+  mask_selection: static
+  mask_length: 10
+  mask_other: 0
+  mask_prob: 0.75
+  mask_channel_selection: static
   mask_channel_length: 64
+  mask_channel_other: 0
+  mask_channel_prob: 0.5
   layerdrop: 0.1
   decoder_layerdrop: 0.1
+  dropout: 0.0
   activation_dropout: 0.1
+  attention_dropout: 0.0
   feature_grad_mult: 0.0
-  freeze_finetune_updates: 25000
+  freeze_finetune_updates: 10000
 
 hydra:
   job:
