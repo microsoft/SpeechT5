@@ -39,6 +39,56 @@ python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
   model.label_rate=50 common.user_dir=SpeechT5/Speech2C/speech2c \
 ```
 
+## Finetune
+```
+DATA_DIR=
+LABEL_DIR=
+FAIRSEQ_PATH=
+W2V_PATH=
+
+python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
+  --config-dir speech2c/config \
+  --config-name base_100h \
+  task.data=${DATA_DIR} task.label_dir=${LABEL_DIR} \
+  model.w2v_path=${W2V_PATH} common.user_dir=SpeechT5/Speech2C/speech2c \
+```
+
+## Inference
+Note that joint CTC and decoder inference is only supported when the batch size is 1
+
+```
+FAIRSEQ_PATH=
+DATA_DIR=
+LABEL_DIR=
+BEAM_SIZE=
+CTC_WEIGHT=
+TEST_SET=
+CHECKPOINT_PATH=
+W2V_PATH=
+
+
+python ${FAIRSEQ_PATH}/fairseq_cli/generate.py ${DATA_DIR} \
+    --label-dir ${LABEL_DIR} \
+    --path ${CHECKPOINT_PATH} \
+    --user-dir SpeechT5/Speech2C/speech2c \
+    --model-overrides "{'w2v_path': '${W2V_PATH}'}" \
+    --gen-subset ${TEST_SET} \
+    --task speech2c_pretraining \
+    --post-process letter \
+    --add-decoder \
+    --labels '["ltr"]' \
+    --fine-tuning \
+    --scoring wer \
+    --max-len-a 0 \
+    --max-len-b 620 \
+    --pad-audio \
+    --random-crop \
+    --ctc-weight ${CTC_WEIGHT} \
+    --max-tokens 8000000 \
+    --beam ${BEAM_SIZE} \
+    --single-target \
+```
+
 ## Results on Librispeech
 
 ### Evaluation on the [LibriSpeech](http://www.openslr.org/12) 10hr subset
