@@ -1,3 +1,12 @@
+# --------------------------------------------------------
+# Pre-Training Transformer Decoder for End-to-End ASR Model with Unpaired Speech Data (https://arxiv.org/abs/2203.17113)
+# Github source: https://github.com/microsoft/SpeechT5/tree/main/Speech2C
+# Copyright (c) 2022 Microsoft
+# Licensed under The MIT License [see LICENSE for details]
+# Based on fairseq code bases
+# https://github.com/pytorch/fairseq
+# --------------------------------------------------------
+
 import math
 
 import numpy as np
