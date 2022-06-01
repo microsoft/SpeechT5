@@ -15,6 +15,12 @@ class Speech2cPretrainingConfig(HubertPretrainingConfig):
         default=False,
         metadata={"help": "whether to add decoder for CE Loss on code"},
     )
+    
+    # For inference
+    ctc_weight: float = field(
+        default=0.0,
+        metadata={"help": "ctc weight during inference"},
+    )
 
 
 @register_task("speech2c_pretraining", dataclass=Speech2cPretrainingConfig)
@@ -57,4 +63,20 @@ class Speech2cPretrainingTask(HubertPretrainingTask):
             tgt_dict=dicts[0],
             add_decoder=self.cfg.add_decoder,
             fine_tuning=self.cfg.fine_tuning,
+        )
+
+    def build_generator(
+        self,
+        models,
+        args,
+        seq_gen_cls=None,
+        extra_gen_cls_kwargs=None,
+    ):
+        from speech2c.squence_generator import SequenceGenerator
+        extra_gen_cls_kwargs = {
+            "ctc_weight": self.cfg.ctc_weight,
+            **extra_gen_cls_kwargs
+        }
+        return super().build_generator(
+            models, args, seq_gen_cls=SequenceGenerator, extra_gen_cls_kwargs=extra_gen_cls_kwargs
         )
