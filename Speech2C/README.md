@@ -40,21 +40,23 @@ python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
 ```
 
 ## Finetune
+
 ```
 DATA_DIR=
 LABEL_DIR=
 FAIRSEQ_PATH=
 W2V_PATH=
+CONFIG_NAME=
 
 python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
   --config-dir speech2c/config \
-  --config-name base_100h \
+  --config-name ${CONFIG_NAME} \
   task.data=${DATA_DIR} task.label_dir=${LABEL_DIR} \
   model.w2v_path=${W2V_PATH} common.user_dir=SpeechT5/Speech2C/speech2c \
 ```
 
 ## Inference
-Note that joint CTC and decoder inference is only supported when the batch size is 1
+Note that joint CTC and decoder inference is only supported when the batch size is 1.
 
 ```
 FAIRSEQ_PATH=
