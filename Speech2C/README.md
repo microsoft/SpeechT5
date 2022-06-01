@@ -7,14 +7,14 @@
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
 | :------: | :----------------------------------------------: | :-----------------: | :-----: |
 | Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) |          -          | [Google Drive](https://drive.google.com/file/d/1nGZ0LWEwlLq2pz7o805YALsMr9irV0Za/view?usp=sharing)  |
-| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) | [10 hrs LibriSpeech](http://www.openslr.org/12) |   |
-| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) | [100 hrs LibriSpeech](http://www.openslr.org/12) |   |
+| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) | [10 hrs LibriSpeech](http://www.openslr.org/12) |  [Google Drive](https://drive.google.com/file/d/1nWSAc-33LmcDQHzH8IjXVJsuk0JZTWgN/view?usp=sharing) |
+| Speech2C | [960 hrs LibriSpeech](http://www.openslr.org/12) | [100 hrs LibriSpeech](http://www.openslr.org/12) |  [Google Drive](https://drive.google.com/file/d/1LwbQ5Y3tKZoK3s1ayLQgsfLTFnmkKNZs/view?usp=sharing) |
 
 
 ## Language Model and Vocabulary
 |  Model   |  Dataset | Model | Vocabulary | 
 | :------: | :------: | :---: | :--------: |
-| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) |  |  |
+| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) |  | [Vocabulary](https://dl.fbaipublicfiles.com/fairseq/wav2vec/dict.ltr.txt) |
 
 ## Setup
 ```
@@ -37,6 +37,56 @@ python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
   --config-name speech2c_base_librispeech \
   task.data=${DATA_DIR} task.label_dir=${LABEL_DIR} task.labels='["km"]' \
   model.label_rate=50 common.user_dir=SpeechT5/Speech2C/speech2c \
+```
+
+## Finetune
+```
+DATA_DIR=
+LABEL_DIR=
+FAIRSEQ_PATH=
+W2V_PATH=
+
+python ${FAIRSEQ_PATH}/fairseq_cli/hydra_train.py \
+  --config-dir speech2c/config \
+  --config-name base_100h \
+  task.data=${DATA_DIR} task.label_dir=${LABEL_DIR} \
+  model.w2v_path=${W2V_PATH} common.user_dir=SpeechT5/Speech2C/speech2c \
+```
+
+## Inference
+Note that joint CTC and decoder inference is only supported when the batch size is 1
+
+```
+FAIRSEQ_PATH=
+DATA_DIR=
+LABEL_DIR=
+BEAM_SIZE=
+CTC_WEIGHT=
+TEST_SET=
+CHECKPOINT_PATH=
+W2V_PATH=
+
+
+python ${FAIRSEQ_PATH}/fairseq_cli/generate.py ${DATA_DIR} \
+    --label-dir ${LABEL_DIR} \
+    --path ${CHECKPOINT_PATH} \
+    --user-dir SpeechT5/Speech2C/speech2c \
+    --model-overrides "{'w2v_path': '${W2V_PATH}'}" \
+    --gen-subset ${TEST_SET} \
+    --task speech2c_pretraining \
+    --post-process letter \
+    --add-decoder \
+    --labels '["ltr"]' \
+    --fine-tuning \
+    --scoring wer \
+    --max-len-a 0 \
+    --max-len-b 620 \
+    --pad-audio \
+    --random-crop \
+    --ctc-weight ${CTC_WEIGHT} \
+    --max-tokens 8000000 \
+    --beam ${BEAM_SIZE} \
+    --single-target \
 ```
 
 ## Results on Librispeech
