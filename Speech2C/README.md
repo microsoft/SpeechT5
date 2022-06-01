@@ -14,7 +14,7 @@
 ## Language Model and Vocabulary
 |  Model   |  Dataset | Model | Vocabulary | 
 | :------: | :------: | :---: | :--------: |
-| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) |  |  |
+| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) |  | [Vocabulary](https://dl.fbaipublicfiles.com/fairseq/wav2vec/dict.ltr.txt) |
 
 ## Setup
 ```
