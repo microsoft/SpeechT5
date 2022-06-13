@@ -24,11 +24,6 @@ from fairseq.data import (
 )
 from fairseq.data.encoders.utils import get_whole_word_mask
 from fairseq import utils
-from speecht5.data.text_to_speech_dataset import (
-    T2SDataConfig,
-    TextToSpeechDataset,
-    get_features_or_waveform
-)
 from speecht5.data.multitask_dataset import MultitaskDataset
 from speecht5.data.speech_to_text_dataset import SpeechToTextDataset
 from speecht5.data.speech_dataset import SpeechPretrainDataset
@@ -569,15 +564,6 @@ class SpeechT5Task(LegacyFairseqTask):
         else:
             logger.info(f"tokenizer: {self.args.bpe_tokenizer}")
             return encoders.build_bpe(Namespace(**{"bpe": "sentencepiece", "sentencepiece_model": self.args.bpe_tokenizer}))
-
-    def get_interactive_tokens_and_lengths(self, lines, encode_fn):
-        n_frames = [get_features_or_waveform(p).shape[0] for p in lines]
-        return lines, n_frames
-
-    def build_dataset_for_inference(self, src_tokens, src_lengths, **kwargs):
-        return TextToSpeechDataset(
-            "interactive", False, self.data_cfg, src_tokens, src_lengths
-        )
 
     def inference_t2s(
         self, models, sample
