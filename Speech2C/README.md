@@ -18,8 +18,8 @@
 
 ## Setup
 ```
+git submodule update --init Speech2C/fairseq
 cd Speech2C/
-git submodule update --init fairseq
 pip install --editable fairseq/
 ```
 
