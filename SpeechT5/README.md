@@ -11,8 +11,8 @@ Official PyTorch implementation and pretrained models of SpeechT5
 
 ## Setup
 ```
+git submodule update --init SpeechT5/fairseq
 cd SpeechT5/
-git submodule update --init fairseq
 pip install --editable fairseq/
 pip install espnet
 ```
@@ -20,7 +20,7 @@ pip install espnet
 ## Data Preparation
 
 ### Speech data and S2T Data
-Please follow the steps for preparing wav2vec 2.0 manifest in [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest). 
+Please follow the steps for preparing wav2vec 2.0 manifest in [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) and preparing HuBERT label in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
 
 We add a third column for the speaker embedding, which is provided in [here](https://drive.google.com/uc?export=download&id=16QOUURZBrW7-GYbVG_gXt3mTMlZmQoH0).
 It includes the speaker embeddings for 960hr training data and dev-other data of LibriSpeech.
