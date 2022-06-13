@@ -1031,7 +1031,7 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
         Overrides the method in :class:`nn.Module`. Compared with that method
         this additionally "upgrades" *state_dicts* from old checkpoints.
         """
-        self.prune_modules(model_cfg.modules_filter)
+        # self.prune_modules(model_cfg.modules_filter)
         for m in self._modules.keys():
             m_state_dict = {
                 key.replace(f"{m}.", ""): value for key, value in state_dict.items() if key.startswith(f"{m}.")
