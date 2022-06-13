@@ -11,8 +11,8 @@ Official PyTorch implementation and pretrained models of SpeechT5
 
 ## Setup
 ```
+git submodule update --init SpeechT5/fairseq
 cd SpeechT5/
-git submodule update --init fairseq
 pip install --editable fairseq/
 pip install espnet
 ```
