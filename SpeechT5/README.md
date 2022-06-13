@@ -30,6 +30,24 @@ We also provide example manifests for your reference in [here](https://drive.goo
 ### Text Data
 Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data.
 
+## Load Pre-Trained Models
+
+```
+import torch
+from speecht5.tasks.speecht5 import SpeechT5Task
+from speecht5.models.speecht5 import T5TransformerModel
+
+checkpoint = torch.load('/path/to/speecht5_base.pt')
+
+checkpoint['cfg']['task'].t5_task = 'pretrain'
+checkpoint['cfg']['task'].hubert_label_dir = "/path/to/hubert_label"
+checkpoint['cfg']['task'].data = "/path/to/tsv_file"
+
+task = SpeechT5Task.setup_task(checkpoint['cfg']['task'])
+model = T5TransformerModel.build_model(checkpoint['cfg']['model'], task)
+model.load_state_dict(checkpoint['model'])
+```
+
 ## Pre-Training
 
 ### 960hr LibriSpeech + LibriSpeech-LM
