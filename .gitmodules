@@ -4,3 +4,6 @@
 [submodule "Speech2C/fairseq"]
 	path = Speech2C/fairseq
 	url = https://github.com/facebookresearch/fairseq.git
+[submodule "YiTrans/fairseq"]
+	path = YiTrans/fairseq
+	url = https://github.com/facebookresearch/fairseq
