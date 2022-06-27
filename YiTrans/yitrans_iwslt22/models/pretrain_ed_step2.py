@@ -29,12 +29,99 @@ from omegaconf import II, MISSING
 logger = logging.getLogger(__name__)
 
 @dataclass
-class HubertStep2Config(HubertAsrConfig):
-    pass
+class JointStep2Config(HubertAsrConfig):
+    ## for decoder overrides
+    decoder_layerdrop: float = field(
+        default=0.1,
+        metadata={"help": "probability of dropping a decoder layer in hubert"},
+    )
+    add_decoder: bool = field(
+        default=False,
+        metadata={"help": "whether to add decoder for CE Loss on code"},
+    )
+    reuse_text_emb: bool = field(
+        default=False,
+        metadata={"help": "reuse text token embeddings instead of initialize randomly"},
+    )
+    freeze_decoder_updates: int = field(
+        default=0,
+        metadata={"help": "dont finetune hubert for this many updates"},
+    )
+    # share_enc_dec_embeddings: bool = field(
+    #     default=False,
+    #     metadata={"help": "share embeddings of (text encoder, text decoder)"},
+    # )
+    share_s2t_t2t_embeddings: bool = field(
+        default=False,
+        metadata={"help": "share embeddings of (speech2text(code), text2text)"},
+    )
+    share_ctc_decoder_embed: bool = field(
+        default=False,
+        metadata={"help": "share ctc and decoder embedding (only when share_decoder_input_output_embed is true)"},
+    )
+    enc_grad_mult: float = field(
+        default=1.0,
+        metadata={"help": "reset feature grad mult in hubert to this (only for st2t)"},
+    )
+    retain_dict_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "delete embeddings according to this path"},
+    )
+    load_step2_model_from: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "load step2 model from"
+        },
+    )
 
-@register_model("hubert_step2", dataclass=HubertStep2Config)
-class HubertStep2(BaseFairseqModel):
-    def __init__(self, cfg: HubertStep2Config, w2v_encoder: BaseFairseqModel):
+    # for other overrides
+    adaptor_stride: int = field(
+        default=2,
+        metadata={"help": "adaptor stride"},
+    )
+
+    # ## for reset some configs
+    # load_pretrained_mbart_from: Optional[str] = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "model to take text encoder decoder weights from (for initialization)"
+    #     },
+    # )
+    # load_pretrained_w2v_from: Optional[str] = field(
+    #     default=None,
+    #     metadata={
+    #         "help": "model to take speech encoder weights from (for initialization)"
+    #     },
+    # )
+    # use_rel_pos_enc: bool = field(
+    #     default=True,
+    #     metadata={"help": "whether to use relative positional encoding"},
+    # )
+    # encoder_layers: int = field(
+    #     default=12,
+    #     metadata={"help": "encoder_layers"},
+    # )
+    # add_text_modality: bool = field(
+    #     default=True,
+    #     metadata={"help": "add_text_modality"},
+    # )
+    # add_text_encoder: bool = field(
+    #     default=True,
+    #     metadata={"help": "add_text_encoder"},
+    # )
+    # share_all_embeddings: bool = field(
+    #     default=True,
+    #     metadata={"help": "share text_encoder, decoder_input, decoder_output embeddings"},
+    # )
+    # add_adaptor: bool = field(
+    #     default=True,
+    #     metadata={"help": "add_adaptor"},
+    # )
+
+
+@register_model("hubert_step2", dataclass=JointStep2Config)
+class JointStep2Model(BaseFairseqModel):
+    def __init__(self, cfg: JointStep2Config, w2v_encoder: BaseFairseqModel):
         super().__init__()
         self.cfg = cfg
         self.w2v_encoder = w2v_encoder
@@ -44,9 +131,9 @@ class HubertStep2(BaseFairseqModel):
         return state_dict
 
     @classmethod
-    def build_model(cls, cfg: HubertStep2Config, task: FairseqTask):
+    def build_model(cls, cfg: JointStep2Config, task: FairseqTask):
         """Build a new model instance."""
-        w2v_encoder = HubertEncoder(cfg, task.target_dictionary)
+        w2v_encoder = JointED(cfg, task.target_dictionary)
         return cls(cfg, w2v_encoder)
 
     def get_normalized_probs(self, net_output, log_probs, sample=None):
@@ -92,8 +179,8 @@ class HubertStep2(BaseFairseqModel):
     def decoder(self):
         return self.w2v_encoder.w2v_model.decoder
 
-class HubertEncoder(FairseqEncoder):
-    def __init__(self, cfg: HubertStep2Config, tgt_dict=None):
+class JointED(FairseqEncoder):
+    def __init__(self, cfg: JointStep2Config, tgt_dict=None):
         self.apply_mask = cfg.apply_mask
         logger.info(f"self.apply_mask: {self.apply_mask}")
 
@@ -117,10 +204,10 @@ class HubertEncoder(FairseqEncoder):
             "feature_grad_mult": cfg.feature_grad_mult,
             "decoder_dict_size": len(tgt_dict) if cfg.add_decoder else -1,
             "share_decoder_input_output_embed": cfg.share_decoder_input_output_embed,
+            "share_s2t_t2t_embeddings": cfg.share_s2t_t2t_embeddings,
             "load_pretrained_w2v_from": None,
             "load_pretrained_mbart_from": None,
             "adaptor_stride": cfg.adaptor_stride,
-            "share_speech_text_embeddings": cfg.share_speech_text_embeddings,
         }
 
         if cfg.w2v_args is None:
@@ -135,7 +222,6 @@ class HubertEncoder(FairseqEncoder):
             if isinstance(w2v_args, Namespace):
                 cfg.w2v_args = w2v_args = convert_namespace_to_omegaconf(w2v_args)
 
-        ## in speech_text_joint_to_text, data is loaded by soundfile, which returns without normalization
         if cfg.normalize != w2v_args.task.normalize:
             logger.warn(
                 "Fine-tuning works best when data normalization is the same. "
