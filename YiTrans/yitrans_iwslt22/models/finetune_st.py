@@ -31,9 +31,54 @@ logger = logging.getLogger(__name__)
 @dataclass
 class HubertSt2tCtcConfig(HubertCtcConfig):
     load_speech_only: bool = II("task.load_speech_only")
-    share_speech_text_embeddings: bool = field(
+    ## for decoder overrides
+    decoder_layerdrop: float = field(
+        default=0.1,
+        metadata={"help": "probability of dropping a decoder layer in hubert"},
+    )
+    add_decoder: bool = field(
         default=False,
-        metadata={"help": "share all embeddings (speech, text)"},
+        metadata={"help": "whether to add decoder for CE Loss on code"},
+    )
+    reuse_text_emb: bool = field(
+        default=False,
+        metadata={"help": "reuse text token embeddings instead of initialize randomly"},
+    )
+    freeze_decoder_updates: int = field(
+        default=0,
+        metadata={"help": "dont finetune hubert for this many updates"},
+    )
+    # share_enc_dec_embeddings: bool = field(
+    #     default=False,
+    #     metadata={"help": "share embeddings of (text encoder, text decoder)"},
+    # )
+    share_s2t_t2t_embeddings: bool = field(
+        default=False,
+        metadata={"help": "share embeddings of (speech2text(code), text2text)"},
+    )
+    share_ctc_decoder_embed: bool = field(
+        default=False,
+        metadata={"help": "share ctc and decoder embedding (only when share_decoder_input_output_embed is true)"},
+    )
+    enc_grad_mult: float = field(
+        default=1.0,
+        metadata={"help": "reset feature grad mult in hubert to this (only for st2t)"},
+    )
+    retain_dict_path: Optional[str] = field(
+        default=None,
+        metadata={"help": "delete embeddings according to this path"},
+    )
+    load_step2_model_from: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "load step2 model from"
+        },
+    )
+
+    # for other overrides
+    adaptor_stride: int = field(
+        default=2,
+        metadata={"help": "adaptor stride"},
     )
 
 @register_model("hubert_st2t", dataclass=HubertSt2tCtcConfig)
