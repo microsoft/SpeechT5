@@ -13,45 +13,34 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Union
 from collections import OrderedDict
 
-import numpy as np
-
-import math
 import copy
 import torch
-import torch.nn as nn
 from omegaconf import II
 
-from fairseq import utils, checkpoint_utils
-from fairseq.data.data_utils import compute_mask_indices
+from fairseq import checkpoint_utils
 from fairseq.data.dictionary import Dictionary
-from fairseq.dataclass import ChoiceEnum, FairseqDataclass
-from fairseq.models import BaseFairseqModel, register_model, FairseqDecoder, FairseqEncoder
-from fairseq.models.speech_to_text.s2t_transformer import TransformerDecoderScriptable
-from fairseq.models.transformer import MultimodalTransformerDecoder
-from fairseq.models.speech_to_text import Conv1dAdaptor
-from fairseq.models.transformer import Embedding
-from fairseq.models.transformer import MoMETransformerEncoder
-from fairseq.file_io import PathManager
-from torch import Tensor
-from fairseq.models.wav2vec.wav2vec2 import (
-    ConvFeatureExtractionModel,
-    TransformerEncoder,
-)
-from fairseq.modules import GradMultiply, LayerNorm, PositionalEmbedding
-from fairseq.tasks.hubert_pretraining import (
-    HubertPretrainingConfig,
-    HubertPretrainingTask,
-)
+from fairseq.dataclass import ChoiceEnum
+from fairseq.models import register_model, FairseqDecoder
 from fairseq.models.transformer import (
     TransformerEncoderBase,
     TransformerConfig,
 )
-
+from fairseq.models.speech_to_text import Conv1dAdaptor
+from fairseq.models.transformer import Embedding
+from fairseq.file_io import PathManager
+from torch import Tensor
+from fairseq.models.wav2vec.wav2vec2 import ConvFeatureExtractionModel
+from fairseq.modules import GradMultiply
 
 from fairseq.models.hubert import HubertConfig, HubertModel
 
-
-
+from yitrans_iwslt22.modules.w2v_encoder import TransformerEncoder
+from yitrans_iwslt22.modules.transformer_decoder import TransformerDecoderScriptable
+from yitrans_iwslt22.modules.multimodal_transformer_decoder import MultimodalTransformerDecoder
+from yitrans_iwslt22.tasks.iwslt_joint_pretraining import (
+    JointPretrainingConfig,
+    JointPretrainingTask,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +186,7 @@ class JointEDModel(HubertModel):
     def __init__(
         self,
         cfg: HubertConfig,
-        task_cfg: HubertPretrainingConfig,
+        task_cfg: JointPretrainingConfig,
         dictionaries: List[Dictionary],
         text_dictionary: Dictionary = None,
     ) -> None:
@@ -321,7 +310,7 @@ class JointEDModel(HubertModel):
         return Embedding(num_embeddings, embed_dim, padding_idx)
 
     @classmethod
-    def build_model(cls, cfg: HubertConfig, task: HubertPretrainingTask):
+    def build_model(cls, cfg: HubertConfig, task: JointPretrainingTask):
         """Build a new model instance."""
         # Change dict size for bpe code
         if hasattr(task, "hubert_tokenizer") and task.hubert_tokenizer is not None and not task.fine_tuning and cfg.decoder_dict_size == -1:
@@ -653,7 +642,7 @@ class JointEDModel(HubertModel):
         return state
         
     def load_pretrained_component_from_model(
-        self, component: Union[TransformerEncoderBase, MoMETransformerEncoder, TransformerEncoder, FairseqDecoder, ConvFeatureExtractionModel], state
+        self, component: Union[TransformerEncoderBase, TransformerEncoder, FairseqDecoder, ConvFeatureExtractionModel], state
     ):
         """
         Load a pretrained FairseqEncoder or FairseqDecoder from checkpoint into the
@@ -661,7 +650,7 @@ class JointEDModel(HubertModel):
         mismatch in the architecture of the corresponding `component` found in the
         `checkpoint` file.
         """
-        if isinstance(component, (TransformerEncoderBase, MoMETransformerEncoder, TransformerEncoder)):
+        if isinstance(component, (TransformerEncoderBase, TransformerEncoder)):
             component_type = "encoder"
         elif isinstance(component, FairseqDecoder):
             component_type = "decoder"
