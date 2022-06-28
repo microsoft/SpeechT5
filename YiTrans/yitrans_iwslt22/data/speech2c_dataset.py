@@ -46,6 +46,7 @@ class Speech2cDataset(HubertDataset):
         tgt_dict: Optional[Dictionary] = None,
         add_decoder: bool = False,
         fine_tuning: bool = False,
+        tokenizer = None,
         tgt_lang_idx: int = None,
         mbart_style_lang_id: bool = False,
         retry_times: int = 5,
@@ -72,6 +73,7 @@ class Speech2cDataset(HubertDataset):
         self.tgt_dict = tgt_dict
         self.add_decoder = add_decoder
         self.fine_tuning = fine_tuning
+        self.tokenizer = tokenizer
         self.tgt_lang_idx = tgt_lang_idx
         self.mbart_style_lang_id = mbart_style_lang_id
         self.retry_times = retry_times
@@ -80,7 +82,22 @@ class Speech2cDataset(HubertDataset):
             f"tgt_lang_idx={self.tgt_lang_idx}, reduce_label_for_dec={reduce_label_for_dec}, "
             f"mbart_style_lang_id={mbart_style_lang_id}"
         )
+    
+    def get_label(self, index, label_idx):
+        if self.store_labels:
+            label = self.label_list[label_idx][index]
+        else:
+            with open(self.label_paths[label_idx]) as f:
+                offset_s, offset_e = self.label_offsets_list[label_idx][index]
+                f.seek(offset_s)
+                label = f.read(offset_e - offset_s)
 
+        if self.tokenizer is not None and self.fine_tuning:
+            label = self.tokenizer.encode(label)
+
+        if self.label_processors is not None:
+            label = self.label_processors[label_idx](label)
+        return label
 
     def collater(self, samples):
         # target = max(sizes) -> random_crop not used
