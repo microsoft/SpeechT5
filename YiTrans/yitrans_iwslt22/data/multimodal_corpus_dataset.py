@@ -42,6 +42,7 @@ class MultiCorpusDataset(FairseqDataset):
         max_tokens_ratio: List[float],
         seed: int,
         sort_indices: bool = False,
+        check_length: bool = False,
     ):
         super().__init__()
         assert isinstance(datasets, OrderedDict)
@@ -53,6 +54,7 @@ class MultiCorpusDataset(FairseqDataset):
         self.seed = seed
         self.sort_indices = sort_indices
         self.max_positions = max_positions
+        self.check_length = check_length
 
         # Avoid repeated conversions to list later
         self.dataset_list = list(datasets.values())
@@ -108,19 +110,20 @@ class MultiCorpusDataset(FairseqDataset):
                                 dataset_indices,
                             )
                         )
-                # ### filter by size
-                # if self.max_positions[key] is not None:
-                #     dataset_indices, ignored = self.datasets[key].filter_indices_by_size(
-                #         dataset_indices,
-                #         self.max_positions[key],
-                #     )
-                #     if len(ignored) > 0:
-                #         logger.warning(
-                #             (
-                #                 "{:,} samples have invalid sizes and will be skipped, "
-                #                 "max_positions={}, first few sample ids={}"
-                #             ).format(len(ignored), self.max_positions[key], ignored[:10])
-                #         )
+                # filter by size, we should ignore it by setting check_length=False
+                # , as it is very time-consuming on large dadaset
+                if self.max_positions[key] is not None and self.check_length:
+                    dataset_indices, ignored = self.datasets[key].filter_indices_by_size(
+                        dataset_indices,
+                        self.max_positions[key],
+                    )
+                    if len(ignored) > 0:
+                        logger.warning(
+                            (
+                                "{:,} samples have invalid sizes and will be skipped, "
+                                "max_positions={}, first few sample ids={}"
+                            ).format(len(ignored), self.max_positions[key], ignored[:10])
+                        )
             
                 if self.sort_indices:
                     logger.info(" - sampled indices took {}s".format(time.time() - tp))
