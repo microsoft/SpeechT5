@@ -22,7 +22,7 @@ from fairseq.data.data_utils import post_process
 from fairseq.tasks import FairseqTask
 from fairseq.logging.meters import safe_round
 
-from ctc_ce import CtcCeCriterionConfig
+from yitrans_iwslt22.criterions.ctc_ce import CtcCeCriterionConfig
 
 @dataclass
 class JointStep2CriterionConfig(CtcCeCriterionConfig):
