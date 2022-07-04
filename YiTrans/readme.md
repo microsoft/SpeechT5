@@ -1,7 +1,7 @@
 # YiTrans@IWSLT22
 
 > [**YiTrans**](https://arxiv.org/abs/2206.05777) (```IWSLT 2022```): **The YiTrans End-to-End Speech Translation System for IWSLT 2022 Offline Shared Task**
-
+> Code is being merged to this repository, thanks for your attention
 
 ## Setup
 ```
@@ -55,14 +55,14 @@ Step 2: Pre-training with ASR dat and domain-filtered bilingual text data
 ```
 bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step2.sh
 ```
-Other models like PT48 can also be fould in ./YiTrans/exp_scripts/pretrain, you might need to modify the PATH variables in .sh files to adjust your data.
+Other configurations like training PT48 can also be fould in ./YiTrans/exp_scripts/pretrain, you might need to modify the PATH variables in .sh files to adjust your data.
 
 ## Fine-tune
 For example of pre-training En-De ST model on MuST-C dataset,
 ```
 bash YiTrans/exp_scripts/finetune_ST/en-de/jtst_pt36s2_mustc.sh
 ```
-Other translation directions or datasets could be found in ./YiTrans/exp_scripts/finetune_ST, you might need to modify the PATH variables in .sh files to adjust your data.
+Other configurations like different translation directions or datasets could be found in ./YiTrans/exp_scripts/finetune_ST, you might need to modify the PATH variables in .sh files to adjust your data.
 
 
 

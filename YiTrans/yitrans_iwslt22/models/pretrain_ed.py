@@ -208,6 +208,8 @@ class JointEDModel(HubertModel):
         super().__init__(cfg, task_cfg, dictionaries)
         logger.info(f"JointEDModel Config: {cfg}")
 
+        self.encoder = TransformerEncoder(cfg)
+
         ### build speeech-text joint_pretrain net from:
         ### - add_text_modality is false: no text network
         ### - add_text_modality is true, add_text_encoder=False: build text embedding
