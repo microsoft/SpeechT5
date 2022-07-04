@@ -34,13 +34,30 @@ mt8corpus_filt_slct.en_XX-de_DE.en_XX.idx
 Please follow the steps of data preparation for S2T tasks [here](https://github.com/pytorch/fairseq/blob/main/examples/speech_to_text/docs/mustc_example.md). Your tsv file should be like this:
 ```
 id      audio   n_frames        tgt_text        speaker src_text        src_lang        tgt_lang
-ted_1_0 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_0.flac    25920   Hinter mir war gar keine Autokolonne.   spk.1   There was no motorcade back there.      en_XX   de_DE
-ted_1_1 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_1.flac    219359  Haben Sie schon mal vom Phantomschmerz gehört? (Lachen) Wir saßen in einem gemieteten Ford Taurus.       spk.1   (Laughter) You've heard of phantom limb pain? (Laughter)        en_XX   de_DE
-ted_1_2 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_2.flac    71360   Es war Zeit zum Abendessen und wir hielten Ausschau nach einem Restaurant.      spk.1   It was dinnertime, and we started looking for a place to eat.    en_XX   de_DE
+ted_1_0 /mnt/speechdata/MUSTC/en-de/flac/ted_1_0.flac    25920   Hinter mir war gar keine Autokolonne.   spk.1   There was no motorcade back there.      en_XX   de_DE
+ted_1_1 /mnt/speechdata/MUSTC/en-de/flac/ted_1_1.flac    219359  Haben Sie schon mal vom Phantomschmerz gehört? (Lachen) Wir saßen in einem gemieteten Ford Taurus.       spk.1   (Laughter) You've heard of phantom limb pain? (Laughter)        en_XX   de_DE
+ted_1_2 /mnt/speechdata/MUSTC/en-de/flac/ted_1_2.flac    71360   Es war Zeit zum Abendessen und wir hielten Ausschau nach einem Restaurant.      spk.1   It was dinnertime, and we started looking for a place to eat.    en_XX   de_DE
 ```
 
 
 
+## Pre-train
+For example of pre-training the PT36 model, please following these steps:
+
+Step 0: Download the released [Hubert model](https://dl.fbaipublicfiles.com/hubert/hubert_large_ll60k.pt) and [mBART model](https://dl.fbaipublicfiles.com/fairseq/models/mbart50/mbart50.pretrained.tar.gz) model.
+
+Step 1: Pre-training with unlabeled speech data and monolingual/bilingual text data 
+```
+bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step1.sh
+```
+
+Step 2: Pre-training with ASR dat and domain-filtered bilingual text data 
+```
+bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step2.sh
+```
+
+
+## Fine-tune
 
 
 
