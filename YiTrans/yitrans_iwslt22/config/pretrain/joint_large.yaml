@@ -10,8 +10,8 @@ common:
 checkpoint:
   save_dir: ???
   save_interval: 1
-  keep_last_epochs: 1
-  save_interval_updates: 5000
+  keep_last_epochs: 10
+  save_interval_updates: 10000
   keep_interval_updates: -1
   # no_epoch_checkpoints: true
 
@@ -35,7 +35,9 @@ task:
   pad_audio: false
   random_crop: true
   normalize: true # must be consistent with extractor
-  add_decoder: false
+  add_decoder: true
+  split_modality_batch: true
+  store_labels: true
   text_cfg:
     seed: ${common.seed}
     text_data: ???
@@ -44,9 +46,10 @@ task:
     tokens_per_sample: 1024
     shorten_method: "random_crop"
     text_maxtokens_ratio: 1.0
+    mask_whole_words: true
 
 dataset:
-  num_workers: 6
+  num_workers: 4
   max_tokens: 900000
   skip_invalid_size_inputs_valid_test: true
   validate_interval: ${checkpoint.save_interval}
@@ -61,8 +64,8 @@ criterion:
   label_smoothing: 0.02
 
 optimization:
-  max_update: 600000
-  lr: [0.0001]
+  max_update: 400000
+  lr: [0.00003]
   clip_norm: 1.0
 
 optimizer:
@@ -113,6 +116,10 @@ model:
   adaptive_input: false
   checkpoint_activations: false
   quant_noise_pq: 0
+  add_text_modality: true
+  add_text_encoder: true
+  add_adaptor: true
+
   text_transformer:
     activation_fn: ${model.activation_fn}
     dropout: ${model.dropout}
