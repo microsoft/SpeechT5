@@ -42,7 +42,7 @@ ted_1_2 /mnt/speechdata/MUSTC/en-de/flac/ted_1_2.flac    71360   Es war Zeit zum
 
 
 ## Pre-train
-For example of pre-training the PT36 model, please following these steps:
+For example of pre-training the PT36 model, please follow these steps:
 
 Step 0: Download the released [Hubert model](https://dl.fbaipublicfiles.com/hubert/hubert_large_ll60k.pt) and [mBART model](https://dl.fbaipublicfiles.com/fairseq/models/mbart50/mbart50.pretrained.tar.gz) model.
 
@@ -55,10 +55,14 @@ Step 2: Pre-training with ASR dat and domain-filtered bilingual text data
 ```
 bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step2.sh
 ```
-
+Other models like PT48 can also be fould in ./YiTrans/exp_scripts/pretrain, you might need to modify the PATH variables in .sh files to adjust your data.
 
 ## Fine-tune
-
+For example of pre-training En-De ST model on MuST-C dataset,
+```
+bash YiTrans/exp_scripts/finetune_ST/en-de/jtst_pt36s2_mustc.sh
+```
+Other translation directions or datasets could be found in ./YiTrans/exp_scripts/finetune_ST, you might need to modify the PATH variables in .sh files to adjust your data.
 
 
 
