@@ -2,9 +2,44 @@
 
 > [**YiTrans**](https://arxiv.org/abs/2206.05777) (```IWSLT 2022```): **The YiTrans End-to-End Speech Translation System for IWSLT 2022 Offline Shared Task**
 
-## The code and models will be public soon
 
-Due to the working schedule, the publicity will be finished in July 4, 2022. Thank for your attention.
+## Setup
+```
+git clone https://github.com/microsoft/SpeechT5.git
+git submodule update --init YiTrans/fairseq
+cd YiTrans/fairseq
+pip install -e .
+```
+
+## Data Preparation
+### Speech/ASR data for pre-training
+Please follow the steps of data preparation for HuBERT in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert#data-preparation).
+### Monolingual text data for pre-training
+Please follow the steps of data preparation for mBART in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/mbart). We reuse the multilingual vocabulary.
+After getting your subset.{idx,bin} files ready, renaming them as subset.lang.lang.{idx,bin}, e.g.
+```
+mono_deduped_filt_sort.en_XX.en_XX.bin
+mono_deduped_filt_sort.en_XX.en_XX.idx
+```
+### Bilingual text data for pre-training
+The same way of preparing monolingual data with only the difference that you should prepare for both the source language and the target languages. Renaming them as subset.src-tgt.{src,tgt}.{idx,bin}, e.g.
+```
+mt8corpus_filt_slct.en_XX-de_DE.de_DE.bin
+mt8corpus_filt_slct.en_XX-de_DE.de_DE.idx
+mt8corpus_filt_slct.en_XX-de_DE.en_XX.bin
+mt8corpus_filt_slct.en_XX-de_DE.en_XX.idx
+```
+
+### ST data for fine-tuning
+Please follow the steps of data preparation for S2T tasks [here](https://github.com/pytorch/fairseq/blob/main/examples/speech_to_text/docs/mustc_example.md). Your tsv file should be like this:
+```
+id      audio   n_frames        tgt_text        speaker src_text        src_lang        tgt_lang
+ted_1_0 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_0.flac    25920   Hinter mir war gar keine Autokolonne.   spk.1   There was no motorcade back there.      en_XX   de_DE
+ted_1_1 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_1.flac    219359  Haben Sie schon mal vom Phantomschmerz gehört? (Lachen) Wir saßen in einem gemieteten Ford Taurus.       spk.1   (Laughter) You've heard of phantom limb pain? (Laughter)        en_XX   de_DE
+ted_1_2 /mnt/default/lozhou/speechdata/MUSTC/en-de/flac/ted_1_2.flac    71360   Es war Zeit zum Abendessen und wir hielten Ausschau nach einem Restaurant.      spk.1   It was dinnertime, and we started looking for a place to eat.    en_XX   de_DE
+```
+
+
 
 
 
