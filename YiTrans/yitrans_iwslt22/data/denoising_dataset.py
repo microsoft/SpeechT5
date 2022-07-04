@@ -12,8 +12,7 @@ import math
 import numpy as np
 import torch
 
-from . import FairseqDataset, data_utils
-from fairseq.data import DenoisingDataset
+from fairseq.data import FairseqDataset, data_utils, DenoisingDataset
 
 
 class DenoisingDatasetLang(DenoisingDataset):

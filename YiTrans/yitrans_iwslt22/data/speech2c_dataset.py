@@ -82,6 +82,8 @@ class Speech2cDataset(HubertDataset):
             f"tgt_lang_idx={self.tgt_lang_idx}, reduce_label_for_dec={reduce_label_for_dec}, "
             f"mbart_style_lang_id={mbart_style_lang_id}"
         )
+
+        self.sizes = np.array(self.sizes)
     
     def get_label(self, index, label_idx):
         if self.store_labels:

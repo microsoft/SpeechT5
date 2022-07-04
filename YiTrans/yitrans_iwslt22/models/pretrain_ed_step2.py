@@ -20,11 +20,12 @@ from fairseq import checkpoint_utils, tasks, utils
 from fairseq.dataclass import FairseqDataclass
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.models import BaseFairseqModel, FairseqEncoder, register_model
-from fairseq.models.transformer import MultimodalTransformerDecoder
 from fairseq.models.hubert.hubert import MASKING_DISTRIBUTION_CHOICES
 from fairseq.models.hubert.hubert_asr import HubertAsrConfig
 from fairseq.tasks import FairseqTask
 from omegaconf import II, MISSING
+
+from yitrans_iwslt22.modules.multimodal_transformer_decoder import MultimodalTransformerDecoder
 
 logger = logging.getLogger(__name__)
 

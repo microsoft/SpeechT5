@@ -34,6 +34,7 @@ from fairseq.modules import GradMultiply
 
 from fairseq.models.hubert import HubertConfig, HubertModel
 
+from fairseq.models.wav2vec.wav2vec2 import TransformerEncoder as W2vTransformerEncoder
 from yitrans_iwslt22.modules.w2v_encoder import TransformerEncoder
 from yitrans_iwslt22.modules.transformer_decoder import TransformerDecoderScriptable
 from yitrans_iwslt22.modules.multimodal_transformer_decoder import MultimodalTransformerDecoder
@@ -181,6 +182,20 @@ class JointEDConfig(HubertConfig):
         },
     )
 
+    # FP16 optimization
+    required_seq_len_multiple: int = field(
+        default=1,
+        metadata={
+            "help": "pad the input to encoder such that the sequence length is divisible by multiple"
+        },
+    )
+    crop_seq_to_multiple: int = field(
+        default=1,
+        metadata={
+            "help": "crop convolutional feature extractor output such that the sequence length is divisible by multiple"
+        },
+    )
+
 @register_model("joint_ed", dataclass=JointEDConfig)
 class JointEDModel(HubertModel):
     def __init__(
@@ -205,7 +220,8 @@ class JointEDModel(HubertModel):
         self.add_text_encoder = cfg.add_text_encoder
         self.share_text_encoder = cfg.share_text_encoder
 
-        text_dictionary = self.cutting_dictionary(text_dictionary, cfg.decoder_dict_size)
+        if cfg.share_s2t_t2t_embeddings:
+            text_dictionary = self.cutting_dictionary(text_dictionary, cfg.decoder_dict_size)
         
         ### build text encoder
         text_encoder_embed_tokens = self.build_embedding(
@@ -315,10 +331,10 @@ class JointEDModel(HubertModel):
         # Change dict size for bpe code
         if hasattr(task, "hubert_tokenizer") and task.hubert_tokenizer is not None and not task.fine_tuning and cfg.decoder_dict_size == -1:
             cfg.decoder_dict_size = len(task.hubert_tokenizer.sp)
-            logger.info(f"set decoder dict size to {len(task.hubert_tokenizer.sp)}")
+            logger.info(f"Use acoustic pieces as code, set decoder dict size to {len(task.hubert_tokenizer.sp)}")
 
         text_dictionary = getattr(task, "text_dictionary", None)
-        model = HubertModel(cfg, task.cfg, task.dictionaries, text_dictionary)
+        model = JointEDModel(cfg, task.cfg, task.dictionaries, text_dictionary)
         return model
 
     def get_normalized_probs(
@@ -642,7 +658,7 @@ class JointEDModel(HubertModel):
         return state
         
     def load_pretrained_component_from_model(
-        self, component: Union[TransformerEncoderBase, TransformerEncoder, FairseqDecoder, ConvFeatureExtractionModel], state
+        self, component: Union[TransformerEncoderBase, TransformerEncoder, W2vTransformerEncoder, FairseqDecoder, ConvFeatureExtractionModel], state
     ):
         """
         Load a pretrained FairseqEncoder or FairseqDecoder from checkpoint into the
@@ -650,7 +666,7 @@ class JointEDModel(HubertModel):
         mismatch in the architecture of the corresponding `component` found in the
         `checkpoint` file.
         """
-        if isinstance(component, (TransformerEncoderBase, TransformerEncoder)):
+        if isinstance(component, (TransformerEncoderBase, TransformerEncoder, W2vTransformerEncoder)):
             component_type = "encoder"
         elif isinstance(component, FairseqDecoder):
             component_type = "decoder"
@@ -660,6 +676,7 @@ class JointEDModel(HubertModel):
         elif isinstance(component, ConvFeatureExtractionModel):
             component_type = "feature_extractor"
         else:
+            print(component)
             raise ValueError(
                 "component to load must be either a FairseqEncoder or "
                 "FairseqDecoder. Loading other component types are not supported."
