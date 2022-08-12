@@ -55,6 +55,13 @@ class SpeechT5Task(LegacyFairseqTask):
             help="max speech sample size",
         )
         parser.add_argument(
+            "--min-speech-sample-size",
+            default=None,
+            type=int,
+            metavar="N",
+            help="min speech sample size",
+        )
+        parser.add_argument(
             "--max-speech-positions",
             default=4000,
             type=int,
@@ -325,6 +332,7 @@ class SpeechT5Task(LegacyFairseqTask):
                 label_paths=paths,
                 label_processors=procs,
                 max_keep_sample_size=self.max_pos[0],
+                min_keep_sample_size=self.args.min_speech_sample_size,
                 normalize=self.args.normalize,
                 store_labels=False,
                 tgt_dict=self.dicts["text"],
