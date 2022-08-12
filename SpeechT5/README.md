@@ -188,11 +188,7 @@ fairseq-train ${DATA_ROOT} \
   --feature-grad-mult 1.0 \
   --best-checkpoint-metric s2t_accuracy \
   --maximize-best-checkpoint-metric \
-<<<<<<< HEAD
-  --finetune-from-model ${PRETRAINED_CKPT_PATH}
-=======
   --finetune-from-model ${PT_CHECKPOINT_PATH}
->>>>>>> f90b699f196b46a0ca5e61d96d0da7a479c69b6b
 ```
 
 #### Inference
@@ -245,7 +241,7 @@ VALID_SET=
 LABEL_DIR=
 BPE_TOKENIZER=
 USER_DIR=
-PRETRAINED_CKPT_PATH=
+PT_CHECKPOINT_PATH=
 
 fairseq-train ${DATA_ROOT} \
   --save-dir ${SAVE_DIR} \
@@ -302,7 +298,7 @@ fairseq-train ${DATA_ROOT} \
   --mask-prob 0.5 \
   --mask-channel-prob 0.5 \
   \
-  --finetune-from-model ${PRETRAINED_CKPT_PATH}
+  --finetune-from-model ${PT_CHECKPOINT_PATH}
 ```
 
 #### Inference
