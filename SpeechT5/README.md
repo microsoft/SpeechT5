@@ -129,6 +129,7 @@ VALID_SET=
 LABEL_DIR=
 BPE_TOKENIZER=
 USER_DIR=
+PT_CHECKPOINT_PATH=
 
 mkdir -p ${SAVE_DIR}
 fairseq-train ${DATA_ROOT} \
@@ -142,7 +143,7 @@ fairseq-train ${DATA_ROOT} \
   --ddp-backend legacy_ddp \
   --user-dir ${USER_DIR} \
   --log-format json \
-  --seed 1337 \
+  --seed 1 \
   --fp16 \
   \
   --task speecht5 \
@@ -187,7 +188,11 @@ fairseq-train ${DATA_ROOT} \
   --feature-grad-mult 1.0 \
   --best-checkpoint-metric s2t_accuracy \
   --maximize-best-checkpoint-metric \
+<<<<<<< HEAD
   --finetune-from-model ${PRETRAINED_CKPT_PATH}
+=======
+  --finetune-from-model ${PT_CHECKPOINT_PATH}
+>>>>>>> f90b699f196b46a0ca5e61d96d0da7a479c69b6b
 ```
 
 #### Inference
@@ -214,7 +219,7 @@ fairseq-generate ${DATA_ROOT} \
   --t5-task s2t \
   --path ${CHECKPOINT_PATH} \
   --hubert-label-dir ${LABEL_DIR} \
-  --ctc-weight 
+  --ctc-weight ${CTC_WEIGHT} \
   --lm-weight ${LM_WEIGHT} \
   --lm-path ${LM_PATH} \
   --max-tokens ${MAX_TOKENS} \
