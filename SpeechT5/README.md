@@ -137,7 +137,7 @@ fairseq-train ${DATA_ROOT} \
   --train-subset ${TRAIN_SET} \
   --valid-subset ${VALID_SET} \
   --hubert-label-dir ${LABEL_DIR} \
-  --distributed-world-size 1 \
+  --distributed-world-size 8 \
   --distributed-port 0 \
   --ddp-backend legacy_ddp \
   --user-dir ${USER_DIR} \
@@ -161,7 +161,6 @@ fairseq-train ${DATA_ROOT} \
   --sentence-avg \
   \
   --optimizer adam \
-  --reset-optimizer \
   --adam-betas "(0.9, 0.98)" \
   --adam-eps 1e-08 \
   --weight-decay 0.1 \
@@ -183,6 +182,12 @@ fairseq-train ${DATA_ROOT} \
   --bert-init \
   --relative-position-embedding \
   --freeze-encoder-updates 13000 \
+  \
+  --keep-last-epochs 10 \
+  --feature-grad-mult 1.0 \
+  --best-checkpoint-metric s2t_accuracy \
+  --maximize-best-checkpoint-metric \
+  --finetune-from-model ${PRETRAINED_CKPT_PATH}
 ```
 
 #### Inference
@@ -220,6 +225,113 @@ fairseq-generate ${DATA_ROOT} \
   --sample-rate 16000
 ```
 
+
+### ST
+
+Here we follow [fairseq/speech_to_text/mustc](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_text/docs/mustc_example.md#data-preparation) to generate vocabulary, which is different from the pre-trained models. We initilize the embedding table of the pre-trained models and fine-tune them.
+
+#### Training
+
+```
+DATA_ROOT=
+SAVE_DIR=
+TRAIN_SET=
+VALID_SET=
+LABEL_DIR=
+BPE_TOKENIZER=
+USER_DIR=
+PRETRAINED_CKPT_PATH=
+
+fairseq-train ${DATA_ROOT} \
+  --save-dir ${SAVE_DIR} \
+  --tensorboard-logdir ${SAVE_DIR} \
+  --train-subset ${TRAIN_SET} \
+  --valid-subset ${VALID_SET} \
+  --hubert-label-dir ${LABEL_DIR} \
+  --distributed-world-size 8 \
+  --distributed-port 0 \
+  --ddp-backend legacy_ddp \
+  --user-dir ${USER_DIR} \
+  --log-format json \
+  --seed 1 \
+  --fp16 \
+  \
+  --task speecht5 \
+  --t5-task s2t \
+  --sample-rate 16000 \
+  --num-workers 6 \
+  --max-tokens 480256 \
+  --update-freq 4 \
+  --bpe-tokenizer ${BPE_TOKENIZER} \
+  --max-tokens-valid 3200000 \
+  \
+  --criterion speecht5 \
+  --label-smoothing 0.1 \
+  --report-accuracy \
+  --sentence-avg \
+  \
+  --optimizer adam \
+  --adam-betas "(0.9, 0.98)" \
+  --weight-decay 0.0 \
+  --clip-norm 10.0 \
+  --lr 0.0002 \
+  --lr-scheduler inverse_sqrt \
+  --warmup-updates 25000 \
+  --feature-grad-mult 1.0 \
+  \
+  --max-update 80000 \
+  --max-text-positions 600 \
+  --min-speech-sample-size 1056 \
+  --max-speech-sample-size 480256 \
+  --max-speech-positions 1876 \
+  --required-batch-size-multiple 1 \
+  --skip-invalid-size-inputs-valid-test \
+  --keep-last-epochs 10 \
+  \
+  --arch t5_transformer_base_asr \
+  --share-input-output-embed \
+  --find-unused-parameters \
+  --bert-init \
+  --relative-position-embedding \
+  --freeze-encoder-updates 0 \
+  --mask-prob 0.5 \
+  --mask-channel-prob 0.5 \
+  \
+  --finetune-from-model ${PRETRAINED_CKPT_PATH}
+```
+
+#### Inference
+
+```
+FAIRSEQ_DIR=
+CHECKPOINT_PATH=
+DATA_ROOT=
+BPE_TOKENIZER=
+LABEL_DIR=
+USER_DIR=
+MAX_TOKENS=
+
+python3 ${FAIRSEQ_DIR}/scripts/average_checkpoints.py \
+  --inputs ${CHECKPOINT_PATH} \
+  --num-epoch-checkpoints 10 \
+  --output ${CHECKPOINT_PATH}/avg_last_10_checkpoint.pt
+
+fairseq-generate ${DATA_ROOT} \
+        --gen-subset tst-COMMON \
+        --bpe-tokenizer ${BPE_TOKENIZER} \
+        --user-dir ${USER_DIR} \
+        --task speecht5 \
+        --t5-task s2t \
+        --path ${CHECKPOINT_PATH}/avg_last_10_checkpoint.pt \
+        --hubert-label-dir ${LABEL_DIR} \
+        --max-tokens ${MAX_TOKENS} \
+        --min-speech-sample-size 1056 \
+        --beam 5 \
+        --scoring sacrebleu \
+        --max-len-a 0 \
+        --max-len-b 620 \
+        --sample-rate 16000
+```
 
 ## License
 
