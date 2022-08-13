@@ -229,7 +229,7 @@ fairseq-generate ${DATA_ROOT} \
 
 ### ST
 
-Here we follow [fairseq/speech_to_text/mustc](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_text/docs/mustc_example.md#data-preparation) to generate vocabulary, which is different from the pre-trained models. We initilize the embedding table of the pre-trained models and fine-tune them.
+Here we follow [fairseq/speech_to_text/mustc](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_text/docs/mustc_example.md#data-preparation) to generate vocabulary, which is different from the pre-trained models. So we randomly initilize the embedding table of the pre-trained models during fine-tuning.
 
 #### Training
 
