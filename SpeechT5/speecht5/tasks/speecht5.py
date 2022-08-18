@@ -26,6 +26,7 @@ from fairseq.data.encoders.utils import get_whole_word_mask
 from fairseq import utils
 from speecht5.data.multitask_dataset import MultitaskDataset
 from speecht5.data.speech_to_text_dataset import SpeechToTextDataset
+from speecht5.data.text_to_speech_dataset import TextToSpeechDataset
 from speecht5.data.speech_dataset import SpeechPretrainDataset
 from speecht5.data.text_dataset import TextPretrainDataset
 from fairseq.data.shorten_dataset import maybe_shorten_dataset
@@ -272,7 +273,7 @@ class SpeechT5Task(LegacyFairseqTask):
         self.config = config
         self.t5_task = args.t5_task
         # Used for filter size
-        if self.t5_task == 's2t':
+        if self.t5_task in ['s2t', 't2s']:
             self.max_pos = [self.args.max_speech_positions * 256]
         elif self.t5_task == 'pretrain':
             self.max_pos = [self.args.max_speech_positions * 256, self.args.max_text_positions]
@@ -331,13 +332,34 @@ class SpeechT5Task(LegacyFairseqTask):
                 sample_rate=self.args.sample_rate,
                 label_paths=paths,
                 label_processors=procs,
-                max_keep_sample_size=self.max_pos[0],
+                max_keep_sample_size=self.max_pos[0] if self.args.max_speech_sample_size is None else self.args.max_speech_sample_size,
                 min_keep_sample_size=self.args.min_speech_sample_size,
                 normalize=self.args.normalize,
                 store_labels=False,
                 tgt_dict=self.dicts["text"],
                 tokenizer=bpe_tokenizer,
             )
+        elif self.t5_task == "t2s":
+            ## For text to speech task
+            from fairseq.data import ConcatDataset
+            bpe_tokenizer = self.build_bpe(self.args)
+            procs = [LabelEncoder(self.dicts["text"])]
+            t2s_datasets = [
+                TextToSpeechDataset(
+                    manifest_path=f"{self.args.data}/{name}.tsv",
+                    sample_rate=self.args.sample_rate,
+                    label_paths=[f"{self.args.hubert_label_dir}/{name}.txt"],
+                    label_processors=procs,
+                    max_keep_sample_size=self.max_pos[0],
+                    normalize=self.args.normalize,
+                    store_labels=False,
+                    src_dict=self.dicts["text"],
+                    tokenizer=bpe_tokenizer,
+                    reduction_factor=self.args.reduction_factor,
+                )
+                for name in split.split(",")
+            ]
+            self.datasets[split] = ConcatDataset(t2s_datasets) if len(t2s_datasets) > 1 else t2s_datasets[0]
         elif self.t5_task == "pretrain":
             is_train_split = ("train" in split)
             pretrain_datasets = []
@@ -572,6 +594,14 @@ class SpeechT5Task(LegacyFairseqTask):
         else:
             logger.info(f"tokenizer: {self.args.bpe_tokenizer}")
             return encoders.build_bpe(Namespace(**{"bpe": "sentencepiece", "sentencepiece_model": self.args.bpe_tokenizer}))
+
+    def generate_speech(self, models, net_input, **kwargs):
+        with torch.no_grad():
+            encoder_input = {
+                k: v for k, v in net_input.items() if k != "prev_output_tokens" and k != "task_name"
+            }
+            encoder_input.update(kwargs)
+            return models[0].generate_speech(**encoder_input)
 
     def inference_t2s(
         self, models, sample

@@ -16,6 +16,7 @@ import torch.nn.functional as F
 from fairseq import utils
 from fairseq.models import (
     FairseqEncoderDecoderModel,
+    FairseqIncrementalDecoder,
     register_model,
     register_model_architecture,
 )
@@ -1032,6 +1033,22 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
         this additionally "upgrades" *state_dicts* from old checkpoints.
         """
         # self.prune_modules(model_cfg.modules_filter)
+        model_dict_size = self.text_decoder_postnet.output_projection.out_features
+        ckpt_dict_size = state_dict["text_decoder_postnet.output_projection.weight"].size(0)
+        if model_dict_size != ckpt_dict_size:
+            # reset dictionary-related modules, such as embedding table and encoder ctc embed
+            logger.warn(f"not equal dictionary between model and checkpoint: {model_dict_size} vs {ckpt_dict_size}")
+            logger.info(f"reset model dictionary with size of {model_dict_size}")
+            removed_keys = [
+                key for key in state_dict.keys() if any(
+                    key.startswith(previ) for previ in [
+                        "encoder.proj", "text_encoder_prenet", "text_decoder_prenet", "text_decoder_postnet"
+                    ]
+                )
+            ]
+            for key in removed_keys:
+                state_dict.pop(key, None)
+                logger.info(f"removed loaded checkpoint: {key}")
         for m in self._modules.keys():
             m_state_dict = {
                 key.replace(f"{m}.", ""): value for key, value in state_dict.items() if key.startswith(f"{m}.")
@@ -1122,6 +1139,15 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
 
         return encoder_output
 
+    def forward_text_encoder(self, src_tokens):
+        # Text Encoder Prenet
+        encoder_input, encoder_padding_mask = self.text_encoder_prenet(src_tokens)
+
+        # Encoder
+        encoder_output = self.encoder(encoder_input, encoder_padding_mask)
+
+        return encoder_output
+
     def forward_decoder(self, tokens, encoder_out, incremental_state):
         # Decoder Prenet
         prev_output_tokens, tgt_mask, incremental_state = self.text_decoder_prenet(tokens, incremental_state)
@@ -1142,6 +1168,69 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
         super().set_num_updates(num_updates)
         self.num_updates = num_updates
     
+    def generate_speech(self, source=None, src_tokens=None, spkembs=None, **kwargs):
+        assert source is not None or src_tokens is not None
+
+        threshold = kwargs.get("threshold", 0.5)
+        minlenratio = kwargs.get("threshold", 0.0)
+
+        if source is None:
+            assert src_tokens.size(0) == 1
+            encoder_out = self.forward_text_encoder(src_tokens)
+            maxlenratio = kwargs.get("threshold", 20.0)
+        else:
+            assert source.size(0) == 1
+            encoder_out = self.forward_encoder(source)
+            maxlenratio = kwargs.get("threshold", 10.0)
+
+        if spkembs is not None and self.spk_embed_integration_type != "pre":
+            encoder_out["encoder_out"] = [self._integrate_with_spk_embed(
+                encoder_out["encoder_out"][0].transpose(0, 1), spkembs
+            ).transpose(0, 1)]
+            spkembs = None
+
+        maxlen = int(encoder_out["encoder_out"][0].size(0) * maxlenratio / self.reduction_factor)
+        minlen = int(encoder_out["encoder_out"][0].size(0) * minlenratio / self.reduction_factor)
+        
+        idx = 0
+        ys = encoder_out["encoder_out"][0].new_zeros(1, 1, self.speech_decoder_postnet.odim)
+        outs, probs = [], []
+
+        # forward decoder step-by-step
+        if isinstance(self.decoder, FairseqIncrementalDecoder):
+            incremental_states = {}
+        else:
+            incremental_states = None
+        attns = []
+        while True:
+            # update index
+            idx += 1
+            # calculate output and stop prob at idx-th step
+            decoder_in, _ = self.speech_decoder_prenet(ys, spkembs=spkembs)
+            z, extra = self.decoder(decoder_in[:,-1:], None, encoder_out, incremental_states, alignment_layer=-1)
+            outs += [self.speech_decoder_postnet.feat_out(z[0, -1]).view(self.reduction_factor, self.speech_decoder_postnet.odim)]  # [(r, odim), ...]
+            probs += [torch.sigmoid(self.speech_decoder_postnet.prob_out(z[0, -1]))]  # [(r), ...]
+
+            # update next inputs
+            ys = torch.cat((ys, outs[-1][-1].view(1, 1, self.speech_decoder_postnet.odim)), dim=1)  # (1, idx + 1, odim)
+            attns.append(torch.stack([att_l[0] for att_l in extra['attn'][0]], dim=0))
+            # check whether to finish generation
+            if int(sum(probs[-1] >= threshold)) > 0 or idx >= maxlen:
+                # check mininum length
+                if idx < minlen:
+                    continue
+                outs = (torch.cat(outs, dim=0).unsqueeze(0).transpose(1, 2))  # (L, odim) -> (1, L, odim) -> (1, odim, L)
+                if self.speech_decoder_postnet.postnet is not None:
+                    outs = outs + self.speech_decoder_postnet.postnet(outs)  # (1, odim, L)
+                outs = outs.transpose(2, 1).squeeze(0)  # (L, odim)
+                probs = torch.cat(probs, dim=0)
+                attn = torch.cat(attns, dim=2)
+                break
+
+        if outs.size(0) == maxlen:
+            logging.warning("output length reaches maximum length")
+        return outs, probs, attn
+
 
 @register_model_architecture(model_name="t5_transformer", arch_name="t5_transformer")
 def base_architecture(args):
