@@ -230,6 +230,8 @@ fairseq-generate ${DATA_ROOT} \
 
 The manifest and pre-trained vocoder can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-tts), which may be helpful to reproduce the results of SpeechT5 TTS model.
 
+We also provide re-implementation of TTS fine-tuned model [speecht5_tts.pt](https://huggingface.co/mechanicalsea/speecht5-tts/blob/main/speecht5_tts.pt), but with a smaller batch size or max updates, which can be helpful.
+
 #### Training
 
 ```
@@ -442,6 +444,10 @@ fairseq-generate ${DATA_ROOT} \
 
 ### VC
 
+The manifest and pre-trained vocoder can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-vc), which may be helpful to reproduce the results of SpeechT5 VC model.
+
+We also provide re-implementation of VC fine-tuned model [speecht5_vc.pt](https://huggingface.co/mechanicalsea/speecht5-vc/blob/main/speecht5_vc.pt), but with a smaller batch size or max updates, which can be helpful.
+
 #### Training
 
 
@@ -518,6 +524,8 @@ fairseq-train ${DATA_ROOT} \
 ```
 
 #### Inference
+
+Generating speech is available only if batch size is 1.
 
 ```
 SPEECHT5_CODE_DIR=
