@@ -440,6 +440,106 @@ fairseq-generate ${DATA_ROOT} \
         --sample-rate 16000
 ```
 
+### VC
+
+#### Training
+
+
+```
+DATA_ROOT=
+SAVE_DIR=
+TRAIN_SET=
+VALID_SET=
+LABEL_DIR=
+BPE_TOKENIZER=
+USER_DIR=
+PT_CHECKPOINT_PATH=
+
+fairseq-train ${DATA_ROOT} \
+        --save-dir ${SAVE_DIR} \
+        --tensorboard-logdir ${SAVE_DIR} \
+        --train-subset ${TRAIN_SET} \
+        --valid-subset ${VALID_SET} \
+        --hubert-label-dir ${LABEL_DIR} \
+        --distributed-world-size 8 \
+        --distributed-port 0 \
+        --ddp-backend legacy_ddp \
+        --user-dir ${USER_DIR} \
+        --log-format json \
+        --seed 1 \
+        --fp16 \
+        \
+        --task speecht5 \
+        --t5-task s2s \
+        --sample-rate 16000 \
+        --num-workers 4 \
+        --max-tokens 1280000 \
+        --update-freq 3 \
+        --max-tokens-valid 1280000 \
+        \
+        --criterion speecht5 \
+        --use-guided-attn-loss \
+        --report-accuracy \
+        --sentence-avg \
+        \
+        --optimizer adam \
+        --dropout 0.2 \
+        --activation-dropout 0.2 \
+        --attention-dropout 0.2 \
+        --encoder-layerdrop 0.05 \
+        --decoder-layerdrop 0.0 \
+        --clip-norm 1.0 \
+        --lr 0.0001 \
+        --lr-scheduler inverse_sqrt \
+        --warmup-updates 6000 \
+        --feature-grad-mult 1.0 \
+        \
+        --max-update 60000 \
+        --max-text-positions 600 \
+        --min-speech-sample-size 1056 \
+        --max-speech-sample-size 480256 \
+        --max-speech-positions 1876 \
+        --required-batch-size-multiple 1 \
+        --skip-invalid-size-inputs-valid-test \
+        --keep-last-epochs 10 \
+        --save-interval-updates 10000 \
+        --disable-validation \
+        --log-interval 10 \
+        \
+        --arch t5_transformer_base_asr \
+        --share-input-output-embed \
+        --find-unused-parameters \
+        --bert-init \
+        --relative-position-embedding \
+        --mask-prob 0.0 \
+        --mask-channel-prob 0.0 \
+        \
+        --finetune-from-model ${PT_CHECKPOINT_PATH}
+```
+
+#### Inference
+
+```
+SPEECHT5_CODE_DIR=
+CHECKPOINT_PATH=
+DATA_ROOT=
+SUBSET=
+LABEL_DIR=
+USER_DIR=
+RESULTS_PATH=
+
+python3 ${SPEECHT5_CODE_DIR}/SpeechT5/scripts/generate_speech.py ${DATA_ROOT} \
+        --gen-subset test \
+        --user-dir ${USER_DIR} \
+        --task speecht5 \
+        --t5-task s2s \
+        --path ${CHECKPOINT_PATH} \
+        --hubert-label-dir ${LABEL_DIR} \
+        --batch-size 1 \
+        --results-path ${RESULTS_PATH} \
+        --sample-rate 16000
+```
+
 ## License
 
 This project is licensed under the license found in the LICENSE file in the root directory of this source tree.

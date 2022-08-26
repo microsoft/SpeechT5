@@ -27,6 +27,7 @@ from fairseq import utils
 from speecht5.data.multitask_dataset import MultitaskDataset
 from speecht5.data.speech_to_text_dataset import SpeechToTextDataset
 from speecht5.data.text_to_speech_dataset import TextToSpeechDataset
+from speecht5.data.speech_to_speech_dataset import SpeechToSpeechDataset
 from speecht5.data.speech_dataset import SpeechPretrainDataset
 from speecht5.data.text_dataset import TextPretrainDataset
 from fairseq.data.shorten_dataset import maybe_shorten_dataset
@@ -273,7 +274,7 @@ class SpeechT5Task(LegacyFairseqTask):
         self.config = config
         self.t5_task = args.t5_task
         # Used for filter size
-        if self.t5_task in ['s2t', 't2s']:
+        if self.t5_task in ['s2t', 't2s', 's2s']:
             self.max_pos = [self.args.max_speech_positions * 256]
         elif self.t5_task == 'pretrain':
             self.max_pos = [self.args.max_speech_positions * 256, self.args.max_text_positions]
@@ -360,6 +361,16 @@ class SpeechT5Task(LegacyFairseqTask):
                 for name in split.split(",")
             ]
             self.datasets[split] = ConcatDataset(t2s_datasets) if len(t2s_datasets) > 1 else t2s_datasets[0]
+        elif self.t5_task == "s2s":
+            manifest = f"{self.args.data}/{split}.tsv"
+            self.datasets[split] = SpeechToSpeechDataset(
+                manifest_path=manifest,
+                sample_rate=self.args.sample_rate,
+                max_keep_sample_size=self.max_pos[0] if self.args.max_speech_sample_size is None else self.args.max_speech_sample_size,
+                min_keep_sample_size=self.args.min_speech_sample_size,
+                normalize=self.args.normalize,
+                reduction_factor=self.args.reduction_factor,
+            )
         elif self.t5_task == "pretrain":
             is_train_split = ("train" in split)
             pretrain_datasets = []

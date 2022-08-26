@@ -181,7 +181,7 @@ def _main(cfg: DictConfig, output_file):
             demo_dir = op.join(op.dirname(cfg.common_eval.results_path), "demo")
             audio_dir = op.join(demo_dir, "audio")
             os.makedirs(audio_dir, exist_ok=True)
-            shutil.copy(op.join(task.dataset(cfg.dataset.gen_subset).audio_root, sample['name'][0]), op.join(audio_dir, audio_name))
+            shutil.copy(op.join(task.dataset(cfg.dataset.gen_subset).audio_root, sample['tgt_name'][0] if "tgt_name" in sample else sample['name'][0]), op.join(audio_dir, audio_name))
             att_dir = op.join(demo_dir, "att_ws")
             _plot_and_save(attn.cpu().numpy(), op.join(att_dir, f"{audio_name}_att_ws.png"))
             spec_dir = op.join(demo_dir, "spec")
