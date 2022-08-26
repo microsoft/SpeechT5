@@ -452,7 +452,7 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
             type=float,
             help="secondary mask argument "
             "(used for more complex distributions), "
-            "see help in compute_mask_indicesh"
+            "see help in compute_mask_indices"
         )
         parser.add_argument(
             '--mask-min-space',
@@ -481,7 +481,7 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
             type=float,
             help="secondary mask argument "
             "(used for more complex distributions), "
-            "see help in compute_mask_indicesh"
+            "see help in compute_mask_indices"
         )
         parser.add_argument(
             '--mask-channel-min-space',
@@ -1167,7 +1167,7 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
         """Set the number of parameters updates."""
         super().set_num_updates(num_updates)
         self.num_updates = num_updates
-    
+
     def generate_speech(self, source=None, src_tokens=None, spkembs=None, **kwargs):
         assert source is not None or src_tokens is not None
 
@@ -1180,7 +1180,7 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
             maxlenratio = kwargs.get("threshold", 20.0)
         else:
             assert source.size(0) == 1
-            encoder_out = self.forward_encoder(source)
+            encoder_out = self.forward_encoder(source, padding_mask=kwargs["padding_mask"])
             maxlenratio = kwargs.get("threshold", 10.0)
 
         if spkembs is not None and self.spk_embed_integration_type != "pre":
