@@ -7,4 +7,4 @@
 
 - The code and checkpoints will be released here.
 - Oct 2022: release preprint in [arXiv](https://arxiv.org/abs/2210.03730)
-
+- (Scheduled) Oct 2022: release the code and models
