@@ -174,6 +174,28 @@ If you find our work is useful in your research, please cite the following paper
 }
 ```
 
+```bibtex
+@article{zhang2022speechut,
+  title   = {SpeechUT: Bridging Speech and Text with Hidden-Unit for Encoder-Decoder Based Speech-Text Pre-training},
+  author  = {Zhang, Ziqiang and Zhou, Long and Ao, Junyi and Liu, Shujie and Dai, Lirong and Li, Jinyu and Wei, Furu},
+  eprint={2210.03730},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  year={2022}
+}
+```
+
+```bibtex
+@article{zhang2022speechlm,
+  title   = {SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data},
+  author  = {Zhang, Ziqiang and Chen, Sanyuan and Zhou, Long and Wu, Yu and Ren, Shuo and Liu, Shujie and Yao, Zhuoyuan and Gong, Xun and Dai, Lirong and Li, Jinyu and Wei, Furu},
+  eprint={2209.15329},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  year={2022}
+}
+```
+
 ### Contact Information
 
 For help or issues using SpeechT5 models, please submit a GitHub issue.
