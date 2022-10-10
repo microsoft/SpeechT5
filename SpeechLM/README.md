@@ -19,15 +19,7 @@ pip install sacrebleu==1.5.1
 
 ## Data Preparation
 
-### Fine-tuning ASR on LibriSpeech
-- Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`.
-
-### Fine-tuning ST on CovoST-2 En-XX
-- Please follow the scripts below to prepare the required files
-```
-
-```
-### Pre-training
+### Pre-training data
 - **Unlabeled speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv`.
 - **Phoneme units for speech:** use phoneme-unit tokenizer to process the speech to prepare `train.phn`.
 - **Hidden units for speech:** use hidden-unit tokenizer to process the speech to prepare `train.km`.
@@ -38,4 +30,11 @@ pip install sacrebleu==1.5.1
 - **Phoneme tokens for text:** use the lexicon provided by LibriSpeech LM corpus to convert words to phonemes, then apply up-sampling to get `librilm.phn-ltr.phn`.
 - **Phoneme tokens for text:** use the text-to-unit tokenizer to convert phonemes to units to get `librilm.phn-ltr.phn`.
 
+### ASR data for LibriSpeech
+- Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`.
 
+### ST data for CovoST-2 En-XX
+- Please follow the scripts below to prepare the required files
+```
+
+```
