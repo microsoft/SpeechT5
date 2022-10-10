@@ -7,3 +7,6 @@
 [submodule "YiTrans/fairseq"]
 	path = YiTrans/fairseq
 	url = https://github.com/facebookresearch/fairseq
+[submodule "SpeechLM/fairseq"]
+	path = SpeechLM/fairseq
+	url = https://github.com/facebookresearch/fairseq.git
