@@ -19,7 +19,7 @@ fi
 echo "--------------------------------------------------------------------------------------"
 echo "--------Tokenize the text..."
 echo "--------------------------------------------------------------------------------------"
-cat tmp/librispeech-lm-norm.txt | sed '1d' | python $src/wrd2ltr.py > tmp/librilm.ltr
+cat librispeech-lm-norm.txt | sed '1d' | python $src/wrd2ltr.py > tmp/librilm.ltr
 
 echo "--------------------------------------------------------------------------------------"
 echo "--------Tokenize the text to the kaldi-style phonemes ..."
