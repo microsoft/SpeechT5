@@ -38,26 +38,66 @@ pip install --editable fairseq/
 pip install sacrebleu==1.5.1
 ```
 
-## Data Preparation
-> We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset)
+## ASR on LibriSpeech
+### Data preparation
+Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`.
+### Fine-tuning a CTC model
+- Fine-tuning the base model
+```
+```
+- Fine-tuning the large model
+```
+```
+### Decoding:
+- Directly decode a CTC model
+```
+```
+- Decoding with 4-gram language model using flashlight and kenlm
+```
+```
+- Decoding with fairseq-lm with large model using flashlight
+```
+```
 
-### Pre-training data
-- **Unlabeled speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.tsv)
+## ST on CoVoST-2
+### Data Preparation
+### Fine-tuning a encoder-decoder model
+- Fine-tuning the base model
+```
+```
+- Fine-tuning the large model
+```
+```
+### Decoding
+- Decoding the base model
+```
+```
+- Decoding the large model
+```
+```
+## Pre-training
+### Data preparation
+We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset).
+- **Speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.tsv)
 - **Phoneme units for speech:** use phoneme-unit tokenizer to process the speech to prepare [`train.phn`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.phn)
 - **Hidden units for speech:** use hidden-unit tokenizer to process the speech to prepare [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km)
 > The hidden-unit tokenizer used in this word is [a K-means model on the top of the Hubert Base model](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
 - Create dict for the target units [`dict.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/dict.phn.txt) or [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt)
 
-- **Unpaired Text:** convert [LibriSpeech LM corpus](http://www.openslr.org/11/) to normalized charecters to get `librilm.phn-ltr.ltr`
-> We provide the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriLM/bin-idx/dict.ltr.txt)
-- **Phoneme tokens for text:** use the lexicon provided by LibriSpeech LM corpus to convert words to phonemes, then apply up-sampling to get `librilm.phn-ltr.phn`.
-- **Phoneme tokens for text:** use the text-to-unit tokenizer to convert phonemes to units to get `librilm.phn-ltr.phn`.
-
-### ASR data for LibriSpeech
-- Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`.
-
-### ST data for CovoST-2 En-XX
-- Please follow the scripts below to prepare the required files
+- **Text (phoneme-unit):** the following scripts will convert the unpaired text from LibriSpeech LM corpus to paired (phonemes, letters) data `train_text.phn-ltr.{phn,ltr}.{bin,idx}`. The dictionaries are provided [`here`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriLM/bin-idx) and the kaldi-processed lexicon is provided [here](https://drive.google.com/file/d/1QVeyCpLXLnujBUAickpo-jaSVY-vKLnT/view?usp=sharing).
+```
+cd SpeechT5/SpeechLM
+bash speechlm/data_process/prepare_phn2ltr_librilm.sh
+```
+### Pre-training SpeechLM-P Base model
+```
+```
+### Pre-training SpeechLM-H Base model
+```
+```
+### Pre-training SpeechLM-P Large model
+```
 ```
 
-```
+
+## Tokenizers
