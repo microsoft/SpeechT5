@@ -18,13 +18,14 @@ pip install sacrebleu==1.5.1
 ```
 
 ## Data Preparation
+> We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset)
 
 ### Pre-training data
-- **Unlabeled speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv`.
-- **Phoneme units for speech:** use phoneme-unit tokenizer to process the speech to prepare `train.phn`.
-- **Hidden units for speech:** use hidden-unit tokenizer to process the speech to prepare `train.km`.
+- **Unlabeled speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.tsv)
+- **Phoneme units for speech:** use phoneme-unit tokenizer to process the speech to prepare [`train.phn`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.phn)
+- **Hidden units for speech:** use hidden-unit tokenizer to process the speech to prepare [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km)
 > The hidden-unit tokenizer used in this word is [a K-means model on the top of the Hubert Base model](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
-- Create dict for the target units `dict.phn.txt` or `dict.km.txt`.
+- Create dict for the target units [`dict.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/dict.phn.txt) or [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt)
 
 - **Unpaired Text:** convert [LibriSpeech LM corpus](http://www.openslr.org/11/) to normalized charecters to get `librilm.phn-ltr.ltr` and `dict.ltr.txt`.
 - **Phoneme tokens for text:** use the lexicon provided by LibriSpeech LM corpus to convert words to phonemes, then apply up-sampling to get `librilm.phn-ltr.phn`.
