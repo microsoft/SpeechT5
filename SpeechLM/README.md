@@ -11,24 +11,25 @@
 
 ## Pre-Trained and Fine-tuned Models
 
-|  Model            |               Pre-training Dataset               | Fine-tuning Dataset                                | Model |
-| :------:          | :----------------------------------------------: | :-----------------:                                | :-----: |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) |                      -                             | [Google drive](https://drive.google.com/file/d/1iJvhSGghNrMT-wAY1nwVu2YaYuTy1pxx/view?usp=sharing)  |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) | [100 hrs LibriSpeech](http://www.openslr.org/12)   | [Google drive](https://drive.google.com/file/d/1mH3N7iKMWYk3rSBJErQPYf3x5ugqDq5x/view?usp=sharing)  |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) | [En-De CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) | [En-Ca CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) | [En-Ar CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Base     | [960 hrs LibriSpeech](http://www.openslr.org/12) | [En-Tr CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Large    | [60k hrs LibriLight]()  |                      -                             | [Google drive](https://drive.google.com/file/d/1QjLIgTJKIylVIp5hUkfSjGPtz8Xo7Lky/view?usp=sharing)  |
-| SpeechLM Large    | [60k hrs LibriLight]() | [960 hrs LibriSpeech](http://www.openslr.org/12)    | [Google drive](https://drive.google.com/file/d/1YZQDVv096o8Opt0RBnkRiZXYPRDqKZnP/view?usp=sharing)  |
-| SpeechLM Large    | [60k hrs LibriLight]() | [En-De CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Large    | [60k hrs LibriLight]() | [En-Ca CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Large    | [60k hrs LibriLight]() | [En-Ar CoVoST-2]()        | [Google drive]()  |
-| SpeechLM Large    | [60k hrs LibriLight]() | [En-Tr CoVoST-2]()        | [Google drive]()  |
+|  Model            |               Pre-training Dataset                                                                            | Fine-tuning Dataset                                               | Model |
+| :------:          | :----------------------------------------------:                                                              | :-----------------:                                               | :-----: |
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12) + [40M Text](http://www.openslr.org/11)                      |                      -                                            | [Google drive](https://drive.google.com/file/d/1iJvhSGghNrMT-wAY1nwVu2YaYuTy1pxx/view?usp=sharing)  |
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12) + [40M Text](http://www.openslr.org/11)                      | [100 hrs LibriSpeech](http://www.openslr.org/12)                  | [Google drive](https://drive.google.com/file/d/1mH3N7iKMWYk3rSBJErQPYf3x5ugqDq5x/view?usp=sharing)  |
+| SpeechLM-H Base   | [960 hrs LibriSpeech](http://www.openslr.org/12) + [40M Text](http://www.openslr.org/11)                      |                      -                                            | [Coming]()  |
+| SpeechLM-H Base   | [960 hrs LibriSpeech](http://www.openslr.org/12) + [40M Text](http://www.openslr.org/11)                      | [100 hrs LibriSpeech](http://www.openslr.org/12)                  | [Coming]()  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) |                      -                                            | [Google drive](https://drive.google.com/file/d/1QjLIgTJKIylVIp5hUkfSjGPtz8Xo7Lky/view?usp=sharing)  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [960 hrs LibriSpeech](http://www.openslr.org/12)                  | [Google drive](https://drive.google.com/file/d/1YZQDVv096o8Opt0RBnkRiZXYPRDqKZnP/view?usp=sharing)  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-De CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/1qYygNWSc11TQbBI1OzC4ChlR-dNh8t9S/view?usp=sharing)  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-Ca CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/162U88mwso2aVfzzPkEM2nP_vwTpcb57T/view?usp=sharing)  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-Ar CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/1lbTSRXewEeb2t45URunD6EiJcbniyjWW/view?usp=sharing)  |
+| SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-Tr CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/1Er4I_jHS175pQQph223yKtiiLQ378VvH/view?usp=sharing)  |
 
-
-
-
+<!-- 
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-De CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Ca CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Ar CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
+| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Tr CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  | 
+-->
 ## Setup
 ```
 git submodule update --init SpeechLM/fairseq
