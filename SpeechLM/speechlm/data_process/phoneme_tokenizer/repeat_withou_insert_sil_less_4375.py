@@ -1,3 +1,12 @@
+# ----------------------------------------------------------------------------
+# SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data (https://arxiv.org/abs/2209.15329)
+# Github source: https://github.com/microsoft/SpeechT5/tree/main/SpeechLM
+# Code based on fairseq: https://github.com/facebookresearch/fairseq/tree/272c4c5197250997148fb12c0db6306035f166a4
+# 
+# Copyright (c) 2022 Microsoft
+# Licensed under The MIT License [see LICENSE for details]
+# ----------------------------------------------------------------------------
+
 import sys, json, tqdm
 import numpy as np
 
