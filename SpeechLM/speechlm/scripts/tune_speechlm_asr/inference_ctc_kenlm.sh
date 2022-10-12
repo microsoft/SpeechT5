@@ -45,4 +45,4 @@ wait
 # When loading the fine-tuned model for decoding, fairseq also loads the pre-trained model to use its states['model'] to build the model instance.
 # To prevent the error about the w2v_path (if you don't have the pre-trained model at w2v_path), we set common_eval.model_overrides to override 
 # the w2v_path by speechlmp_base_cfg.pt. speechlmp_base_cfg.pt is just a pre-trained model checkpoint without parameters (only contains config).
-# So, if you have trained your own model with different model config, you should modify the common_eval.model_overrides to your own.
+# So, if you have trained a model with different model config (e.g. different encoder layers), you should modify the common_eval.model_overrides to your own.
