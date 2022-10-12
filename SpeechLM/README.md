@@ -99,29 +99,27 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     model_path=path/to/your/pre-trained/model
     lang=de # ca,ar,tr
     data_dir=dataset/CommonVoice/v4/en/en-${lang}
-    ```
-    > ```Usage (Base model): speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=2]```
-    ```
+    # Usage (Base model): speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=2]
     bash speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
     ```
 - Fine-tuning the Large model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
-    > ```Usage (Large model): speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=4]```
     ```
+    # Usage (Large model): speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=4]
     bash speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
     ```
 
 ### Decoding
 - Decoding the base model
-    > `Usage: speechlm/scripts/tune_speechlm_st/inference_base.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]`
     ```
+    # Usage: speechlm/scripts/tune_speechlm_st/inference_base.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]
     model_path=path/to/your/fine-tuned/model
     lang=de # ca,ar,tr
     data_dir=dataset/CommonVoice/v4/en/en-${lang}
     bash speechlm/scripts/tune_speechlm_st/inference_base.sh $model_path $data_dir $lang dev
     ```
 - Decoding the large model
-    > `Usage: speechlm/scripts/tune_speechlm_st/inference_large.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]`
     ```
+    # Usage: speechlm/scripts/tune_speechlm_st/inference_large.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]
     bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
     ```
 
