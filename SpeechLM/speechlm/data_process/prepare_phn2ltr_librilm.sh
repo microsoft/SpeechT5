@@ -4,7 +4,7 @@ cwd=${PWD}
 src=${PWD}/speechlm/data_process
 
 set -e
-mkdir -p dataset/LibriLM/tmp && cd dataset/LibriLM
+mkdir -p dataset/LibriLM/phone_unit/tmp && cd dataset/LibriLM
 
 if [ ! -f librispeech-lm-norm.txt ]; then
     echo "--------------------------------------------------------------------------------------"
@@ -14,12 +14,13 @@ if [ ! -f librispeech-lm-norm.txt ]; then
     gzip -d librispeech-lm-norm.txt.gz
 fi
 
-# head -1000000 librispeech-lm-norm.txt > tmp/librispeech-lm-norm.txt
+# head -1000000 librispeech-lm-norm.txt > phone_unit/tmp/librispeech-lm-norm.txt
+cd phone_unit/
 
 echo "--------------------------------------------------------------------------------------"
 echo "--------Tokenize the text..."
 echo "--------------------------------------------------------------------------------------"
-cat librispeech-lm-norm.txt | sed '1d' | python $src/wrd2ltr.py > tmp/librilm.ltr
+cat ../librispeech-lm-norm.txt | sed '1d' | python $src/wrd2ltr.py > tmp/librilm.ltr
 
 echo "--------------------------------------------------------------------------------------"
 echo "--------Tokenize the text to the kaldi-style phonemes ..."

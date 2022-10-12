@@ -123,7 +123,7 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
     ```
 
-## Pre-training
+<!-- ## Pre-training
 ### Data preparation
 We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset).
 - **Speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.tsv)
@@ -132,20 +132,51 @@ We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/Spe
 > The hidden-unit tokenizer used in this word is [a K-means model on the top of the Hubert Base model](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
 - Create dict for the target units [`dict.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/dict.phn.txt) or [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt)
 
-- **Text (phoneme-unit):** the following scripts will convert the unpaired text from LibriSpeech LM corpus to paired (phonemes, letters) data `train_text.phn-ltr.{phn,ltr}.{bin,idx}`. The dictionaries are provided [`here`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriLM/bin-idx) and the kaldi-processed lexicon is provided [here](https://drive.google.com/file/d/1QVeyCpLXLnujBUAickpo-jaSVY-vKLnT/view?usp=sharing).
-```
-cd SpeechT5/SpeechLM
-bash speechlm/data_process/prepare_phn2ltr_librilm.sh
-```
-### Pre-training SpeechLM-P Base model
-```
-```
-### Pre-training SpeechLM-H Base model
-```
-```
-### Pre-training SpeechLM-P Large model
-```
-```
+- **Text (phoneme-unit):**  -->
+## Pre-training
+- SpeechLM-P Base model
+
+    Models will be stored in `$mount/pretrain`.
+    ```
+    data_dir=dataset/LibriSpeech/phone_unit   # should contain train_960.{tsv,phn}
+    text_data_dir=dataset/LibriLM/phone_unit/bin-idx     # should contain train_text.phn-ltr.{phn,ltr}.{bin,idx}
+    # Usage: speechlm/scripts/pretrain_speechlm/base_speechlmp.sh <data_dir> <text_data_dir> [mount=$PWD] [world_size=32] [update_freq=1]
+    bash speechlm/scripts/pretrain_speechlm/base_speechlmp.sh $data_dir $text_data_dir
+    ```
+- SpeechLM-H Base model
+    ```
+    data_dir=dataset/LibriSpeech/hidden_unit  # should contain train_960.{tsv,phn}
+    text_data_dir=dataset/LibriLM/km-ltr/bin-idx     # should contain train_text.km-ltr.{km,ltr}.{bin,idx}
+    # Usage: speechlm/scripts/pretrain_speechlm/base_speechlmh.sh <data_dir> <text_data_dir> [mount=$PWD] [world_size=32] [update_freq=1]
+    bash speechlm/scripts/pretrain_speechlm/base_speechlmp.sh $data_dir $text_data_dir
+    ```
+- SpeechLM-P Large model
+    ```
+    data_dir=dataset/LibriSpeech/phone_unit   # should contain train_960.{tsv,phn}
+    text_data_dir=dataset/LibriLM/phone_unit/bin-idx     # should contain train_text.phn-ltr.{phn,ltr}.{bin,idx}
+    # Usage: speechlm/scripts/pretrain_speechlm/base_speechlmp.sh <data_dir> <text_data_dir> [mount=$PWD] [world_size=32] [update_freq=1]
+    bash speechlm/scripts/pretrain_speechlm/large_speechlmp.sh $data_dir $text_data_dir
+    ```
 
 
 ## Tokenizers
+### Phoneme-unit Tokenizer for Speech
+This tokenizer is used to produce the frame-laigned phonemes for unlabeled speech, which is actually a hybrid HMM ASR model.
+
+In the Base setting, we use 100h LibriSpeech labeled data to train the HMM model under Kaldi recipe, then decode the unpaired speech and get the aligned phonemes from the lattice.
+
+We provide the processed phonemes of 960h speech here: [`train_960.tsv`](), [`train_960.phn`](), [`dev_clean.tsv`](), [`dev_clean.phn`](). Note that the label-rate is 100 (10ms).
+
+### Phoneme-unit Tokenizer for Text
+This tokenizer is used to phonemize the unpaired text data to (phonemes, letters) paired data, following a `words -> phonemes -> upsampled phones` pipeline.
+
+The following script will download LibriSpeech LM corpus and produce the required data: `train_text.phn-ltr.phn.{idx,bin}` and `train_text.phn-ltr.ltr.{idx,bin}`. 
+> Before runing it, make sure you have our provided [`dcit.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriLM/phone_unit/bin-idx/dcit.phn.txt) and [`dcit.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriLM/phone_unit/bin-idx/dcit.ltr.txt) in the output dir `dataset/LibriLM/phone_unit/bin-idx/`.
+```
+# data will be in dataset/LibriLM/phone_unit/
+bash speechlm/data_process/prepare_phn2ltr_librilm.sh
+```
+### Hidden-unit Tokenizer for Speech
+Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare 1) wav recordings [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.tsv) and 2) corresponding hidden-units [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km), and 3) unit vocabulary [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt).
+
+### Hidden-unit Tokenizer for Text
