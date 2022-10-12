@@ -43,63 +43,88 @@ pip install sacrebleu==1.5.1
 Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`. We also provided exmples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/). You should make sure the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/dict.ltr.txt) is the same as that used for the pre-trained model.
 ### Fine-tuning a CTC model
 - Fine-tuning the base model
-```
-# Usage: speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=1]
-model_path=path/to/your/pre-trained/model
-data_dir=dataset/LibriSpeech/asr
-bash speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh $model_path $data_dir 'tag400k'
-```
+    ```
+    # Usage: speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=1]
+    model_path=path/to/your/pre-trained/model
+    data_dir=dataset/LibriSpeech/asr
+    bash speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh $model_path $data_dir 'tag400k'
+    ```
 - Fine-tuning the large model
-```
-# Usage: speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=4]
-model_path=path/to/your/pre-trained/model
-data_dir=dataset/LibriSpeech/asr
-bash speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh $model_path $data_dir 'tag400k'
-```
-### Decoding:
+    ```
+    # Usage: speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=4]
+    model_path=path/to/your/pre-trained/model
+    data_dir=dataset/LibriSpeech/asr
+    bash speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh $model_path $data_dir 'tag400k'
+    ```
+### Decoding
 - Directly decode a CTC model.
-```
-# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
-model_path=path/to/your/fine-tuned/model
-data_dir=dataset/LibriSpeech/asr
-bash speechlm/scripts/tune_speechlm_asr/inference_ctc.sh $model_path $data_dir
-# for large models
-# bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large.sh $model_path $data_dir
-```
+    ```
+    # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+    model_path=path/to/your/fine-tuned/model
+    data_dir=dataset/LibriSpeech/asr
+    bash speechlm/scripts/tune_speechlm_asr/inference_ctc.sh $model_path $data_dir
+    # for large models
+    # bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large.sh $model_path $data_dir
+    ```
 - Decoding with 4-gram language model using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python) and [kenlm](https://github.com/kpu/kenlm).
-> please put [4-gram.arpa](https://www.openslr.org/resources/11/4-gram.arpa.gz) and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
-```
-# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
-model_path=path/to/your/fine-tuned/model
-data_dir=dataset/LibriSpeech/asr
-bash speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh $model_path $data_dir
-```
+    > Please put [4-gram.arpa](https://www.openslr.org/resources/11/4-gram.arpa.gz) and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
+    ```
+    # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+    model_path=path/to/your/fine-tuned/model
+    data_dir=dataset/LibriSpeech/asr
+    bash speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh $model_path $data_dir
+    ```
 - Decoding large models with fairseq-lm using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python).
-> please put [lm_librispeech_word_transformer.pt](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.pt) and its vocabulary [`dict.txt`](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.dict) into `$data_dir/fairseq_word_lm`, and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
-Capitalize the `dict.txt` to amke it compatible with the word-to-letter lexicon.
-```
-# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
-model_path=path/to/your/fine-tuned/model
-data_dir=dataset/LibriSpeech/asr
-bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh $model_path $data_dir dev_other
-```
+    > Please put [lm_librispeech_word_transformer.pt](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.pt) and its vocabulary [`dict.txt`](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.dict) into `$data_dir/fairseq_word_lm`, and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`. Capitalize the `dict.txt` to amke it compatible with the word-to-letter lexicon.
+    ```
+    # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+    model_path=path/to/your/fine-tuned/model
+    data_dir=dataset/LibriSpeech/asr
+    bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh $model_path $data_dir dev_other
+    ```
 
 ## ST on CoVoST-2
 ### Data Preparation
+1. Download [Common Voice audio clips](https://commonvoice.mozilla.org/en/datasets) (version 4) for English into `$cv_root/en`.
+2. Get data manifest. The following script will convert mp3 files to waveform, create tsv file containing speech/translation paires, create data config files. We provide examples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/CommonVoice/v4/en/en-de).
+    ```
+    lang=de # ca,ar,tr
+    cv_root=dataset/CommonVoice/v4
+    bash speechlm/data_process/prepare_covost2_enxx.sh $lang $cv_root
+    ```
 ### Fine-tuning a encoder-decoder model
-- Fine-tuning the base model
-```
-```
-- Fine-tuning the large model
-```
-```
+- Fine-tuning the Base model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
+
+    ```
+    model_path=path/to/your/pre-trained/model
+    lang=de # ca,ar,tr
+    data_dir=dataset/CommonVoice/v4/en/en-${lang}
+    ```
+    > ```Usage (Base model): speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=2]```
+    ```
+    bash speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
+    ```
+- Fine-tuning the Large model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
+    > ```Usage (Large model): speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=4]```
+    ```
+    bash speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
+    ```
+
 ### Decoding
 - Decoding the base model
-```
-```
+    > `Usage: speechlm/scripts/tune_speechlm_st/inference_base.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]`
+    ```
+    model_path=path/to/your/fine-tuned/model
+    lang=de # ca,ar,tr
+    data_dir=dataset/CommonVoice/v4/en/en-${lang}
+    bash speechlm/scripts/tune_speechlm_st/inference_base.sh $model_path $data_dir $lang dev
+    ```
 - Decoding the large model
-```
-```
+    > `Usage: speechlm/scripts/tune_speechlm_st/inference_large.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]`
+    ```
+    bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
+    ```
+
 ## Pre-training
 ### Data preparation
 We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset).
