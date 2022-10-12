@@ -35,10 +35,14 @@ for subset in ${gen_set//,/ }; do
     decoding.lmpath=$path_to_lm \
     decoding.beam=1500 \
     \
+    common_eval.model_overrides=\"{\'w2v_path\':\'$CODE_ROOT/speechlm/config/pretrain/speechlmp_base_cfg.pt\'}\" \
     common_eval.quiet=false \
     &
 done
 wait
 
-# model_path=/mnt/default/v-ziqzhang/data/speechulm/finetune_asr/base_speechlmp_32gpu_1accum/ctc30k_from_400k_bz1.6m_lr1e-5/checkpoint_best.pt
-# data_dir=/home/v-ziqzhang/dataset/LibriSpeech/asr
+### important to know
+# When loading the fine-tuned model for decoding, fairseq also loads the pre-trained model to use its states['model'] to build the model instance.
+# To prevent the error about the w2v_path (if you don't have the pre-trained model at w2v_path), we set common_eval.model_overrides to override 
+# the w2v_path by speechlmp_base_cfg.pt. speechlmp_base_cfg.pt is just a pre-trained model checkpoint without parameters (only contains config).
+# So, if you have trained your own model with different model config, you should modify the common_eval.model_overrides to your own.
