@@ -1,5 +1,5 @@
 #!/bin/bash
-[ ${PWD##*/} != SpeechLM ] && echo "Error: dir not match! Switch to SpeechLM and run it again!"
+[ ${PWD##*/} != SpeechLM ] && echo "Error: dir not match! Switch to SpeechLM/ and run it again!" && exit 1
 cwd=${PWD}
 src=${PWD}/speechlm/data_process
 

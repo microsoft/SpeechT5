@@ -40,23 +40,48 @@ pip install sacrebleu==1.5.1
 
 ## ASR on LibriSpeech
 ### Data preparation
-Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`.
+Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`. We also provided exmples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/). You should make sure the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/dict.ltr.txt) is the same as that used for the pre-trained model.
 ### Fine-tuning a CTC model
 - Fine-tuning the base model
 ```
+# Usage: speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=1]
+model_path=path/to/your/pre-trained/model
+data_dir=dataset/LibriSpeech/asr
+bash speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh $model_path $data_dir 'tag400k'
 ```
 - Fine-tuning the large model
 ```
+# Usage: speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=4]
+model_path=path/to/your/pre-trained/model
+data_dir=dataset/LibriSpeech/asr
+bash speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh $model_path $data_dir 'tag400k'
 ```
 ### Decoding:
-- Directly decode a CTC model
+- Directly decode a CTC model.
 ```
+# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+model_path=path/to/your/fine-tuned/model
+data_dir=dataset/LibriSpeech/asr
+bash speechlm/scripts/tune_speechlm_asr/inference_ctc.sh $model_path $data_dir
+# for large models
+# bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large.sh $model_path $data_dir
 ```
-- Decoding with 4-gram language model using flashlight and kenlm
+- Decoding with 4-gram language model using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python) and [kenlm](https://github.com/kpu/kenlm).
+> please put [4-gram.arpa](https://www.openslr.org/resources/11/4-gram.arpa.gz) and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
 ```
+# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+model_path=path/to/your/fine-tuned/model
+data_dir=dataset/LibriSpeech/asr
+bash speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh $model_path $data_dir
 ```
-- Decoding with fairseq-lm with large model using flashlight
+- Decoding large models with fairseq-lm using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python).
+> please put [lm_librispeech_word_transformer.pt](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.pt) and its vocabulary [`dict.txt`](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.dict) into `$data_dir/fairseq_word_lm`, and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
+Capitalize the `dict.txt` to amke it compatible with the word-to-letter lexicon.
 ```
+# Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
+model_path=path/to/your/fine-tuned/model
+data_dir=dataset/LibriSpeech/asr
+bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh $model_path $data_dir dev_other
 ```
 
 ## ST on CoVoST-2
