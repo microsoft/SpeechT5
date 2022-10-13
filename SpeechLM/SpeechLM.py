@@ -1,123 +1,145 @@
 # ----------------------------------------------------------------------------
 # SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data (https://arxiv.org/abs/2209.15329)
 # Github source: https://github.com/microsoft/SpeechT5/tree/main/SpeechLM
-# Code based on fairseq: https://github.com/facebookresearch/fairseq/tree/272c4c5197250997148fb12c0db6306035f166a4
+# Code based on fairseq: https://github.com/facebookresearch/fairseq
 # 
 # Copyright (c) 2022 Microsoft
 # Licensed under The MIT License [see LICENSE for details]
 # ----------------------------------------------------------------------------
 
+import copy
 import logging
-from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-from fairseq import utils, checkpoint_utils
-from fairseq.data.data_utils import compute_mask_indices
-from fairseq.data.dictionary import Dictionary
-from fairseq.dataclass import ChoiceEnum
-from fairseq.models import BaseFairseqModel, register_model
-from fairseq.models.transformer import Embedding
-from fairseq.file_io import PathManager
 from torch import Tensor
-from fairseq.models.wav2vec.wav2vec2 import ConvFeatureExtractionModel
-from fairseq.modules import GradMultiply, LayerNorm
-from fairseq.tasks.hubert_pretraining import (
-    HubertPretrainingConfig,
-    HubertPretrainingTask,
+
+from modules import (
+    compute_mask_indices,
+    LayerNorm,
+    ConvFeatureExtractionModel,
+    GradMultiply,
+    TransformerEncoder,
+    TransformerEncoderBase,
+
 )
-from fairseq.models.hubert import HubertConfig
-from fairseq.models.transformer import TransformerConfig
-from speechlm.modules.w2v_encoder import TransformerEncoder
-from speechlm.modules.transformer_encoder import TransformerEncoderBase
+
+# from fairseq.models.transformer import TransformerConfig
 
 logger = logging.getLogger(__name__)
 
-EXTRACTOR_MODE_CHOICES = ChoiceEnum(["default", "layer_norm"])
-MASKING_DISTRIBUTION_CHOICES = ChoiceEnum(["static", "uniform", "normal", "poisson"])
+class DictConfig:
+    def __init__(self, cfg=None):
+        if cfg is not None:
+            self.update(cfg)
+    
+    def update(self, cfg: dict):
+        self.__dict__.update(cfg)
 
 
-@dataclass
-
-class SpeechlmConfig(HubertConfig):
-    use_rel_pos_enc: bool = field(
-        default=False,
-        metadata={"help": "whether to use relative positional encoding"},
-    )
-    scaling_for_att: float = field(
-        default=1.0,
-        metadata={"help": "scaling for attention weights to prevent overflow issue (for large model)"},
-    )
-
-    # unit encoder-decoder
-    text_transformer: TransformerConfig = TransformerConfig()
-    add_unit_encoder: bool = field(
-        default=False,
-        metadata={"help": "add unit encoder"},
-    )
-    add_decoder: bool = field(
-        default=False,
-        metadata={"help": "add decoder"},
-    )
-    add_text_ctc: bool = field(
-        default=False,
-        metadata={"help": "add_text_ctc head"},
-    )
-    text_ctc_conv_kernel: int = field(
-        default=2,
-        metadata={"help": "text_ctc_conv kernel size"},
-    )
-    mask_u2t: bool = field(
-        default=True,
-        metadata={"help": "mask the unit input in unit-to-text task"},
-    )
-    compute_mum: bool = field(
-        default=False,
-        metadata={"help": "compute MLM loss in unit-to-text task"},
-    )
-
-    # embedding mixing
-    mix_with_unit: bool = field(
-        default=True,
-        metadata={"help": "mix with the unit embeddings"},
-    )
-    use_pred_unit: bool = field(
-        default=False,
-        metadata={"help": "use the embeddings of predicted units"},
-    )
-    l2_embedding: bool = field(
-        default=False,
-        metadata={"help": "compute l2 loss between unit embedding and unit hidden state"},
-    )
-
-    # Finetune related
-    encoder_dict_size: int = field(
-        default=-1,
-        metadata={"help": "text encoder dictionary dimension"},
-    )
-
-    decoder_dict_size: int = field(
-        default=-1,
-        metadata={"help": "decoder dictionary dimension"},
-    )
+class TransformerConfig:
+    def __init__(self, cfg=None):
+        if cfg is not None:
+            self.update(cfg)
+    
+    def update(self, cfg: dict):
+        if 'encoder' in cfg:
+            self.encoder = DictConfig(cfg['encoder'])
+            del cfg['encoder']
+        if 'quant_noise' in cfg:
+            self.quant_noise = DictConfig(cfg['quant_noise'])
+            del cfg['quant_noise']
+        if 'decoder' in cfg:
+            del cfg['decoder']
+        self.__dict__.update(cfg)
 
 
-@register_model("speechlm", dataclass=SpeechlmConfig)
-class SpeechlmModel(BaseFairseqModel):
+class SpeechLMConfig:
+    def __init__(self, cfg=None):
+        self.label_rate: int = 50
+        self.extractor_mode: str = "default"     # mode for feature extractor. default has a single group norm with d groups in the first conv block, whereas layer_norm has layer norms in every block (meant to use with normalize=True)
+        self.encoder_layers: int = 12     # num encoder layers in the transformer
+        self.encoder_embed_dim: int = 768     # encoder embedding dimension
+        self.encoder_embed_dim: int = 768     # encoder embedding dimension
+        self.encoder_ffn_embed_dim: int = 3072     # encoder embedding dimension for FFN
+        self.encoder_attention_heads: int = 12     # num encoder attention heads
+        self.activation_fn: str = "gelu"     # activation function to use
+        self.layer_type: str = "transformer"     # layer type in encoder
+
+        # dropouts
+        self.dropout: float = 0.1     # dropout probability for the transformer
+        self.attention_dropout: float = 0.1     # dropout probability for attention weights
+        self.activation_dropout: float = 0.0     # dropout probability after activation in FFN
+        self.encoder_layerdrop: float = 0.0     # probability of dropping a tarnsformer layer
+        self.dropout_input: float = 0.0     # dropout to apply to the input (after feat extr)
+        self.dropout_features: float = 0.0     # dropout to apply to the features (after feat extr)
+
+        self.final_dim: int = 256   # project final representations and targets to this many dimensions
+        self.layer_norm_first: bool = False     # apply layernorm first in the transformer
+        self.conv_feature_layers: str = "[(512,10,5)] + [(512,3,2)] * 4 + [(512,2,2)] * 2"     # string describing convolutional feature extraction layers in form of a python list that contains [(dim, kernel_size, stride), ...]
+        self.conv_bias: bool = False     # include bias in conv encoder
+        self.feature_grad_mult: float = 1.0     # multiply feature extractor var grads by this
+
+        # masking
+        self.mask_length: int = 10     # mask length
+        self.mask_prob: float = 0.65     # probability of replacing a token with mask
+        self.mask_selection: str = "static"     # how to choose mask length
+        self.mask_other: float = 0     # secondary mask argument (used for more complex distributions), see help in compute_mask_indicesh
+        self.no_mask_overlap: bool = False     # whether to allow masks to overlap
+        self.mask_min_space: int = 1     # min space between spans (if no overlap is enabled)
+
+
+        # channel masking
+        self.mask_channel_length: int = 10     # length of the mask for features (channels)
+        self.mask_channel_prob: float = 0.0     # probability of replacing a feature with 0
+        self.mask_channel_selection: str = "static"     # how to choose mask length for channel masking
+        self.mask_channel_other: float = 0     # secondary mask argument (used for more complex distributions), see help in compute_mask_indices
+        self.no_mask_channel_overlap: bool = False     # whether to allow channel masks to overlap
+        self.mask_channel_min_space: int = 1     # min space between spans (if no overlap is enabled)
+
+        # positional embeddings
+        self.conv_pos: int = 128     # number of filters for convolutional positional embeddings
+        self.conv_pos_groups: int = 16     # number of groups for convolutional positional embedding
+
+        # loss computation
+        self.skip_masked: bool = False  # skip computing losses over masked frames
+        self.skip_nomask: bool = False  # skip computing losses over unmasked frames
+        self.checkpoint_activations: bool = False   # recompute activations and save memory for extra compute
+        
+        # FP16 optimization
+        self.required_seq_len_multiple: int = 2     # pad the input to encoder such that the sequence length is divisible by multiple
+
+        # Custom
+        self.use_rel_pos_enc: bool = False  # whether to use relative positional encoding
+        self.scaling_for_att: float = 1.0   # scaling for attention weights to prevent overflow issue (for large model)
+
+        # unit encoder-decoder
+        self.add_unit_encoder: bool = False # add unit encoder
+
+        # embedding mixing
+        self.mix_with_unit: bool = True # mix with the unit embeddings
+        self.use_pred_unit: bool = False    # use the embeddings of predicted units
+        self.l2_embedding: bool = False # compute l2 loss between unit embedding and unit hidden state
+        
+        if cfg is not None:
+            self.update(cfg)
+    
+    def update(self, cfg: dict):
+        model_cfg = copy.deepcopy(cfg)
+        self.text_transformer = TransformerConfig(model_cfg['text_transformer'])
+        del model_cfg['text_transformer']
+        self.__dict__.update(model_cfg)
+
+class SpeechLM(nn.Module):
     def __init__(
         self,
-        cfg: SpeechlmConfig,
-        task_cfg: HubertPretrainingConfig,
-        dictionaries: List[Dictionary],
-        unit_dictionary: Dictionary = None,
-        text_tgt_dictionary: Dictionary = None,
+        cfg: SpeechLMConfig,
     ) -> None:
         super().__init__()
-        logger.info(f"SpeechlmModel Config: {cfg}")
+        self.cfg = cfg
 
         feature_enc_layers = eval(cfg.conv_feature_layers)  # noqa
         self.embed = feature_enc_layers[-1][0]
@@ -128,8 +150,9 @@ class SpeechlmModel(BaseFairseqModel):
             mode=cfg.extractor_mode,
             conv_bias=cfg.conv_bias,
         )
+        sample_rate = 16000
         feature_ds_rate = np.prod([s for _, _, s in feature_enc_layers])
-        self.feat2tar_ratio = cfg.label_rate * feature_ds_rate / task_cfg.sample_rate
+        self.feat2tar_ratio = cfg.label_rate * feature_ds_rate / sample_rate
 
         self.post_extract_proj = (
             nn.Linear(self.embed, cfg.encoder_embed_dim)
@@ -159,7 +182,10 @@ class SpeechlmModel(BaseFairseqModel):
         self.skip_masked = cfg.skip_masked
         self.skip_nomask = cfg.skip_nomask
 
-        final_dim = cfg.final_dim if cfg.final_dim > 0 else cfg.encoder_embed_dim
+        self.final_dim = cfg.final_dim if cfg.final_dim > 0 else cfg.encoder_embed_dim
+        self.final_proj_list = nn.ModuleList([
+            nn.Linear(cfg.encoder_embed_dim, self.final_dim) for _ in range(2)
+        ])
 
         self.mask_emb = nn.Parameter(
             torch.FloatTensor(cfg.encoder_embed_dim).uniform_()
@@ -168,105 +194,36 @@ class SpeechlmModel(BaseFairseqModel):
         self.encoder = TransformerEncoder(cfg)
         self.layer_norm = LayerNorm(self.embed)
 
-        self.target_glu = None
-        if cfg.target_glu:
-            self.target_glu = nn.Sequential(
-                nn.Linear(final_dim, final_dim * 2), nn.GLU()
-            )
-
-        self.final_dim = final_dim
-        assert len(dictionaries) <= 2, f"Only support <=2 kinds of targets, get {len(dictionaries)} dictionaries"
-        if len(dictionaries) == 1:
-            dictionaries = [dictionaries[0], dictionaries[0]]
-        
-        self.final_proj_list = nn.ModuleList([
-            nn.Linear(cfg.encoder_embed_dim, final_dim) for _ in dictionaries
-        ])
-
-        self.num_classes = [len(d) for d in dictionaries]
-        self.label_embs_list = nn.ParameterList([
-            nn.Parameter(torch.FloatTensor(n, final_dim)) for n in self.num_classes
-        ])
-        for i in range(len(self.num_classes)):
-            nn.init.uniform_(self.label_embs_list[i])
-
         ### build unit encoder:
         self.mask_u2t = cfg.mask_u2t
         self.compute_mum = cfg.compute_mum
         self.add_text_ctc = cfg.add_text_ctc
         self.text_ctc_conv_kernel = cfg.text_ctc_conv_kernel
-        self.padding_idx = unit_dictionary.pad()
-        self.unit_mask_idx = unit_dictionary.index("<mask>")
+        self.padding_idx = 1
 
         self.add_unit_encoder = cfg.add_unit_encoder
         self.mix_with_unit = cfg.mix_with_unit
         self.use_pred_unit = cfg.use_pred_unit
         self.l2_embedding = cfg.l2_embedding
         if self.add_unit_encoder:
-            assert len(unit_dictionary) == self.num_classes[0], f"unit_dictionary: {len(unit_dictionary)}, self.num_classes[0]: {self.num_classes[0]}"
-            ### build unit pre-net, and shared with hubert label_embs if needed (default: False)
-            self.unit_embed_tokens = self.build_embedding(
-                    unit_dictionary,
-                    cfg.text_transformer.encoder.embed_dim,
-                )
-            if self.final_dim == cfg.text_transformer.encoder.embed_dim:
-                logger.info("Share label_embs[0] with unit_embed_tokens ...")
-                nn.init.uniform_(self.unit_embed_tokens.weight)
-                self.label_embs_list[0] = self.unit_embed_tokens.weight
-
+            self.unit_embed_tokens = None
             ### build unit encoder
             self.unit_encoder = TransformerEncoderBase(
                 cfg.text_transformer, 
-                unit_dictionary, 
-                self.unit_embed_tokens,
+                dictionary=None, 
+                embed_tokens=self.unit_embed_tokens,
                 use_rel_pos_enc=cfg.use_rel_pos_enc,
                 scaling_for_att=cfg.scaling_for_att,
             )
             
-            ### build text ctc head
-            if self.add_text_ctc:
-                conv = nn.Conv1d(
-                    cfg.text_transformer.encoder.embed_dim, cfg.text_transformer.encoder.embed_dim, 
-                    self.text_ctc_conv_kernel,
-                    stride=self.text_ctc_conv_kernel // 2,
-                    bias=False,
-                    padding=self.text_ctc_conv_kernel // 2,
-                )
-                nn.init.kaiming_normal_(conv.weight)
-                self.unit_encoder_ctc_head = nn.Sequential(
-                    Rotate3D(),
-                    conv,
-                    nn.Dropout(p=0.1),
-                    nn.Sequential(
-                        Rotate3D(),
-                        Rotate3D(),
-                        LayerNorm(cfg.text_transformer.encoder.embed_dim),
-                    ),
-                    nn.GELU(),
-                    nn.Linear(cfg.text_transformer.encoder.embed_dim, len(text_tgt_dictionary)),
-                )
-
         ### build unit2text decoder, not available for now
         self.add_decoder = cfg.add_decoder
 
-    def build_embedding(self, dictionary, embed_dim):
-        num_embeddings = len(dictionary)
-        padding_idx = dictionary.pad()
-        return Embedding(num_embeddings, embed_dim, padding_idx)
-
     def upgrade_state_dict_named(self, state_dict, name):
-        """Upgrade a (possibly old) state dict for new versions of fairseq."""
+        """Upgrade a (possibly old) state dict for new versions."""
 
         super().upgrade_state_dict_named(state_dict, name)
         return state_dict
-
-    @classmethod
-    def build_model(cls, cfg: SpeechlmConfig, task: HubertPretrainingTask):
-        """Build a new model instance."""
-        unit_dictionary = getattr(task, "text_src_dictionary", None)
-        text_tgt_dictionary = getattr(task, "text_dictionary", None)
-        model = SpeechlmModel(cfg, task.cfg, task.dictionaries, unit_dictionary, text_tgt_dictionary)
-        return model
 
     def apply_mask(self, x, padding_mask, target_list):
         B, T, C = x.shape
@@ -528,14 +485,14 @@ class SpeechlmModel(BaseFairseqModel):
         # x: (B, T, D), float
         # padding_mask: (B, T), bool
         # mask_indices: (B, T), bool
-        x, _ = self.encoder(
+        x, layer_results = self.encoder(
             x,
             padding_mask=padding_mask,
             layer=None if output_layer is None else output_layer - 1,
         )
 
         if features_only:
-            return {"x": x, "padding_mask": padding_mask, "features": features}
+            return {"x": x, "padding_mask": padding_mask, "features": features, "layer_results": layer_results}
         
         logit_m_list, logit_u_list = self.compute_hubert_logits(
             x,
@@ -637,38 +594,43 @@ class SpeechlmModel(BaseFairseqModel):
         mask: bool = False,
         ret_conv: bool = False,
         output_layer: Optional[int] = None,
-        **kwargs,
+        ret_layer_results: bool = False,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Extract features for only speech input"""
-        res = self.forward(
-            source,
-            padding_mask=padding_mask,
-            mask=mask,
-            features_only=True,
-            output_layer=output_layer,
-        )
-        x = res["x"] # B x T x D
-        padding_mask = res["padding_mask"]
-
-        if self.add_unit_encoder:
-            src_tokens, x, _ = self.convert_embeddings(
-                x,
-                padding_mask,
-                mix_with_unit=False,
-                use_pred_unit=False,
+        with torch.no_grad():
+            res = self.forward(
+                source,
+                padding_mask=padding_mask,
+                mask=mask,
+                features_only=True,
+                output_layer=output_layer,
             )
-            encoder_out = self.unit_encoder(
-                src_tokens,
-                token_embeddings=x,
-                return_all_hiddens=output_layer is not None
-            )
-            res["x"] = encoder_out['encoder_out'][0].transpose(0, 1)  # (B, T, D)
-        
-        feature = res["features"] if ret_conv else res["x"]
-        if output_layer is not None:
-            feature = encoder_out['encoder_states']
+            # {"x": x, "padding_mask": padding_mask, "features": features, "layer_results": layer_results}
 
-        return feature, padding_mask
+            x = res["x"] # B x T x D
+            padding_mask = res["padding_mask"]
+            if self.add_unit_encoder and (output_layer is None or output_layer > self.cfg.encoder_layers):
+                src_tokens, x, _ = self.convert_embeddings(
+                    x,
+                    padding_mask,
+                    mix_with_unit=False,
+                    use_pred_unit=False,
+                )
+                return_all_hiddens=output_layer is not None and output_layer > self.cfg.encoder_layers
+                encoder_out = self.unit_encoder(
+                    src_tokens,
+                    token_embeddings=x,
+                    return_all_hiddens=return_all_hiddens,
+                )
+                res["x"] = encoder_out['encoder_out'][0].transpose(0, 1)  # (B, T, D)
+                if return_all_hiddens:
+                    res["layer_results"] += encoder_out['encoder_states'][1:1+output_layer-len(res["layer_results"])]
+            
+            feature = res["features"] if ret_conv else res["x"]
+            if ret_layer_results:
+                feature = (feature, res["layer_results"])
+
+            return feature, padding_mask
 
     def get_logits(self, net_output, is_masked=True):
         if is_masked:
@@ -703,18 +665,3 @@ class SpeechlmModel(BaseFairseqModel):
     def remove_pretraining_modules(self, step2=False):
         self.target_glu = None
 
-    def load_checkpoint(self, checkpoint: str):
-        if not PathManager.exists(checkpoint):
-            raise IOError("Model file not found: {}".format(checkpoint))
-        state = checkpoint_utils.load_checkpoint_to_cpu(checkpoint)
-        return state
-
-class Rotate3D(nn.Module):
-    """
-    (T, B, D) --> (B, D, T) --> (D, T, B) --> (T, B, D)
-    """
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, x):
-        return x.permute(1, 2, 0)

@@ -27,12 +27,32 @@
 | SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-Ar CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/1lbTSRXewEeb2t45URunD6EiJcbniyjWW/view?usp=sharing)  |
 | SpeechLM-P Large  | [60k hrs LibriLight](https://github.com/facebookresearch/libri-light) + [40M Text](http://www.openslr.org/11) | [En-Tr CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive](https://drive.google.com/file/d/1Er4I_jHS175pQQph223yKtiiLQ378VvH/view?usp=sharing)  |
 
-<!-- 
-| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-De CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
-| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Ca CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
-| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Ar CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  |
-| SpeechLM-P Base   | [960 hrs LibriSpeech](http://www.openslr.org/12)                      | [En-Tr CoVoST-2](https://github.com/facebookresearch/covost)      | [Google drive]()  | 
--->
+
+## Extract features using pre-trained models
+For easier use of our pre-trained models, we merge all inference-related code to [`SpeechLM.py`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/SpeechLM.py) and make cleaned checkpoints by removing non-required modules: [`SpeechLM-P Base`](https://msranlcmtteamdrive.blob.core.windows.net/share/speechlm/speechlmp_base_checkpoint_clean.pt?sv=2020-10-02&st=2022-10-13T06%3A15%3A13Z&se=2023-10-14T06%3A15%3A00Z&sr=c&sp=rl&sig=b0RFMEsG5ch3OA2%2FTTsoG5DFnLTE9c%2BeHKFJKcHI3Xg%3D). Now you can directly use the following script to extract your speech features:
+```
+import torch
+from SpeechLM import SpeechLMConfig, SpeechLM
+
+checkpoint = torch.load('path/to/the/cleaned/checkpoint.pt')
+cfg = SpeechLMConfig(checkpoint['cfg']['model'])
+model = SpeechLM(cfg)
+model.load_state_dict(checkpoint['model'])
+model.eval()
+
+# extract the representation of last layer
+wav_input_16khz = torch.randn(1,10000)
+rep = model.extract_features(wav_input_16khz)[0]
+
+# extract the representation of each layer
+wav_input_16khz = torch.randn(1,10000)
+output_layer = model.cfg.encoder_layers + model.cfg.text_transformer.encoder.layers
+rep, layer_results = model.extract_features(wav_input_16khz, output_layer=output_layer, ret_layer_results=True)[0]
+layer_reps = [x.transpose(0, 1) for x in layer_results]
+
+```
+
+
 ## Setup
 ```
 git submodule update --init SpeechLM/fairseq
@@ -44,22 +64,22 @@ pip install sacrebleu==1.5.1
 ## ASR on LibriSpeech
 ### Data preparation
 Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`. We also provided exmples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/). You should make sure the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/dict.ltr.txt) is the same as that used for the pre-trained model.
-### Fine-tuning a CTC model
-- Fine-tuning the base model
+### Fine-tune a CTC model
+- Fine-tune the base model
     ```
     # Usage: speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=1]
     model_path=path/to/your/pre-trained/model
     data_dir=dataset/LibriSpeech/asr
     bash speechlm/scripts/tune_speechlm_asr/finetune_base_ctc.sh $model_path $data_dir 'tag400k'
     ```
-- Fine-tuning the large model
+- Fine-tune the large model
     ```
     # Usage: speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh <model_path> <data_dir> <cpt_tag> [mount=$PWD] [world_size=8] [update_freq=4]
     model_path=path/to/your/pre-trained/model
     data_dir=dataset/LibriSpeech/asr
     bash speechlm/scripts/tune_speechlm_asr/finetune_large_ctc.sh $model_path $data_dir 'tag400k'
     ```
-### Decoding
+### Decode
 - Directly decode a CTC model.
     ```
     # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
@@ -69,7 +89,7 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     # for large models
     # bash speechlm/scripts/tune_speechlm_asr/inference_ctc_large.sh $model_path $data_dir
     ```
-- Decoding with 4-gram language model using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python) and [kenlm](https://github.com/kpu/kenlm).
+- Decode with 4-gram language model using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python) and [kenlm](https://github.com/kpu/kenlm).
     > Please put [4-gram.arpa](https://www.openslr.org/resources/11/4-gram.arpa.gz) and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`.
     ```
     # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
@@ -77,7 +97,7 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     data_dir=dataset/LibriSpeech/asr
     bash speechlm/scripts/tune_speechlm_asr/inference_ctc_kenlm.sh $model_path $data_dir
     ```
-- Decoding large models with fairseq-lm using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python).
+- Decode large models with fairseq-lm using [flashlight](https://github.com/flashlight/flashlight/tree/main/bindings/python).
     > Please put [lm_librispeech_word_transformer.pt](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.pt) and its vocabulary [`dict.txt`](https://dl.fbaipublicfiles.com/wav2letter/sota/2019/lm/lm_librispeech_word_transformer.dict) into `$data_dir/fairseq_word_lm`, and the word-to-letter lexicon [librispeech_lexicon.lst](https://drive.google.com/file/d/1q7IbNGqtwXnctjvuvpviQ4ZmepFHQmTO/view?usp=sharing) into `$data_dir`. Capitalize the `dict.txt` to amke it compatible with the word-to-letter lexicon.
     ```
     # Usage: speechlm/scripts/tune_speechlm_asr/inference_ctc_large_fsqlm.sh <model_path> <data_dir> [gen-set=dev_clean,dev_other,test_clean,test_other]
@@ -95,8 +115,8 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     cv_root=dataset/CommonVoice/v4
     bash speechlm/data_process/prepare_covost2_enxx.sh $lang $cv_root
     ```
-### Fine-tuning a encoder-decoder model
-- Fine-tuning the Base model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
+### Fine-tune a encoder-decoder model
+- Fine-tune the Base model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
 
     ```
     model_path=path/to/your/pre-trained/model
@@ -105,14 +125,14 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     # Usage (Base model): speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=2]
     bash speechlm/scripts/tune_speechlm_st/ft_base_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
     ```
-- Fine-tuning the Large model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
+- Fine-tune the Large model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
     ```
     # Usage (Large model): speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=4]
     bash speechlm/scripts/tune_speechlm_st/ft_large_covost_enxx.sh $model_path $data_dir $lang 'tag400k'
     ```
 
-### Decoding
-- Decoding the base model
+### Decode
+- Decode the base model
     ```
     # Usage: speechlm/scripts/tune_speechlm_st/inference_base.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]
     model_path=path/to/your/fine-tuned/model
@@ -120,7 +140,7 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     data_dir=dataset/CommonVoice/v4/en/en-${lang}
     bash speechlm/scripts/tune_speechlm_st/inference_base.sh $model_path $data_dir $lang dev
     ```
-- Decoding the large model
+- Decode the large model
     ```
     # Usage: speechlm/scripts/tune_speechlm_st/inference_large.sh <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5]
     bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
@@ -136,7 +156,8 @@ We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/Spe
 - Create dict for the target units [`dict.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/dict.phn.txt) or [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt)
 
 - **Text (phoneme-unit):**  -->
-## Pre-training
+## Pre-train
+Please follow the instructions of [Tokenizer](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/README.md#Tokenizers) to prepare the pre-training data.
 - SpeechLM-P Base model
 
     Models will be stored in `$mount/pretrain`.
