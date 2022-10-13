@@ -37,7 +37,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
   hydra.run.dir=$MODEL_DIR \
-  hydra.job.name=${exp_name}
+  hydra.job.name=pretrain
 
 # data_dir="/mnt/default/v-ziqzhang/data/stbert/data/librispeech/hubert_release_iter2_layer9_kmeans/local"
 # text_data_dir="/mnt/default/v-ziqzhang/dataset/LibriLM/from_fastT2U/bin-idx"
