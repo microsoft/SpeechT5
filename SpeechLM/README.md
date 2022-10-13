@@ -2,12 +2,11 @@
 
 <!--**Pre-trained models for speech related tasks**-->
 
- [**SpeechLM**](https://arxiv.org/abs/2209.15329): **Enhanced Speech Pre-Training with Unpaired Textual Data**
+ [**SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**](https://arxiv.org/abs/2209.15329)
 
 
-- The code and checkpoints will be released here.
+- (Updating) Oct 2022: release the code and models
 - Oct 2022: release preprint in [arXiv](https://arxiv.org/abs/2209.15329)
-- (In progress) Oct 2022: release the code and models
 
 ## Pre-Trained and Fine-tuned Models
 
@@ -183,4 +182,4 @@ bash speechlm/data_process/prepare_phn2ltr_librilm.sh
 ### Hidden-unit Tokenizer for Speech
 Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare 1) wav recordings [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.tsv) and 2) corresponding hidden-units [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km), and 3) unit vocabulary [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt).
 
-### Hidden-unit Tokenizer for Text
+<!-- ### Hidden-unit Tokenizer for Text -->
