@@ -54,6 +54,8 @@ layer_reps = [x.transpose(0, 1) for x in layer_results]
 
 
 ## Setup
+To fine-tune or pre-train more models, please follow the instructions below.
+
 ```
 git submodule update --init SpeechLM/fairseq
 cd SpeechLM/
