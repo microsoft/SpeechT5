@@ -27,7 +27,6 @@ for subset in ${gen_set//,/ }; do
     task.data=$DATA_DIR task.label_dir=$DATA_DIR task.normalize=false \
     common_eval.results_path=${results_path} common_eval.path=${model_path} \
     \
-    common_eval.model_overrides=\"{\'w2v_path\':\'$CODE_ROOT/speechlm/config/pretrain/speechlmp_base_cfg.pt\'}\" \
     common_eval.quiet=true \
     &
 done
@@ -38,3 +37,4 @@ wait
 # To prevent the error about the w2v_path (if you don't have the pre-trained model at w2v_path), we set common_eval.model_overrides to override 
 # the w2v_path by speechlmp_base_cfg.pt. speechlmp_base_cfg.pt is just a pre-trained model checkpoint without parameters (only contains config).
 # So, if you have trained a model with different model config (e.g. different encoder layers), you should modify the common_eval.model_overrides to your own.
+    # common_eval.model_overrides=\"{\'w2v_path\':\'$CODE_ROOT/speechlm/config/pretrain/speechlmp_base_cfg.pt\'}\" \
