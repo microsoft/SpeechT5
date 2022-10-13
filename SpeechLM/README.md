@@ -29,7 +29,7 @@
 
 
 ## Extract features using pre-trained models
-For easier use of our pre-trained models, we merge all inference-related code to [`SpeechLM.py`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/SpeechLM.py) and make cleaned checkpoints by removing non-required modules: [`SpeechLM-P Base`](https://msranlcmtteamdrive.blob.core.windows.net/share/speechlm/speechlmp_base_checkpoint_clean.pt?sv=2020-10-02&st=2022-10-13T06%3A15%3A13Z&se=2023-10-14T06%3A15%3A00Z&sr=c&sp=rl&sig=b0RFMEsG5ch3OA2%2FTTsoG5DFnLTE9c%2BeHKFJKcHI3Xg%3D). Now you can directly use the following script to extract your speech features:
+For easier use of our pre-trained models, we merge all inference-related code to [`SpeechLM.py`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/SpeechLM.py) and make cleaned checkpoints [`SpeechLM-P Base`](https://msranlcmtteamdrive.blob.core.windows.net/share/speechlm/speechlmp_base_checkpoint_clean.pt?sv=2020-10-02&st=2022-10-13T06%3A15%3A13Z&se=2023-10-14T06%3A15%3A00Z&sr=c&sp=rl&sig=b0RFMEsG5ch3OA2%2FTTsoG5DFnLTE9c%2BeHKFJKcHI3Xg%3D) by removing non-required modules. Now you can directly use the following script to extract your speech features:
 ```
 import torch
 from SpeechLM import SpeechLMConfig, SpeechLM
