@@ -2,9 +2,9 @@
 
 <!--**Pre-trained models for speech related tasks**-->
 
- [**SpeechUT**](https://arxiv.org/abs/2210.03730): **Bridging Speech and Text with Hidden-Unit for Encoder-Decoder Based Speech-Text Pre-training**
+ [**SpeechUT: Bridging Speech and Text with Hidden-Unit for Encoder-Decoder Based Speech-Text Pre-training**](https://arxiv.org/abs/2210.03730)
 
 
-- The code and checkpoints will be released here.
+- (Updating) Oct 2022: release the code and models
 - Oct 2022: release preprint in [arXiv](https://arxiv.org/abs/2210.03730)
-- (Scheduled) Oct 2022: release the code and models
+
