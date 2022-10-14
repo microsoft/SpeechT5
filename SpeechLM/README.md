@@ -212,7 +212,7 @@ We train a [FastSpeech](https://arxiv.org/abs/2006.04558)-like model (instead ge
 3. Train the [model](speechlm/models/fasttext2unit.py) on the paired data:
     ```bash
     data_dir=dataset/LibriSpeech/fast_phone2unit
-    bash SpeechLM/speechlm/scripts/tokenizer_fastT2U/train_s_5e-4.sh $data_dir
+    bash speechlm/scripts/tokenizer_fastT2U/train_s_5e-4.sh $data_dir
     ```
 4. [Generate](speechlm/scripts/tokenizer_fastT2U/generate.sh) hidden units for a large text corpus:
     ```bash
