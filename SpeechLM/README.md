@@ -5,7 +5,7 @@
  [**SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**](https://arxiv.org/abs/2209.15329)
 
 
-- (Updating) Oct 2022: release the code and models
+- (Done) Oct 2022: release the code and models
 - Oct 2022: release preprint in [arXiv](https://arxiv.org/abs/2209.15329)
 
 ## Pre-Trained and Fine-tuned Models
@@ -189,7 +189,7 @@ Please follow the instructions of [Tokenizer](README.md#Tokenizers) to prepare t
 This tokenizer is used to produce the frame-laigned phonemes for unlabeled speech, which is actually a hybrid HMM ASR model.
 
 In the Base setting, we use 100h LibriSpeech labeled data to train the HMM model under Kaldi recipe, then decode the unpaired speech and get the aligned phonemes from the lattice.
-Here we provided the processed phonemes of 960h speech here: [`train_960.tsv`](), [`train_960.phn`](), [`dev_clean.tsv`](), [`dev_clean.phn`](). Note that the label-rate is 100 (10ms).
+Here we provided the processed phonemes of 960h speech here: [`train_960.tsv`](https://drive.google.com/file/d/1rxlikMglL2kEsF4NfqekZRoA02klY7CE/view?usp=sharing), [`train_960.phn`](https://drive.google.com/file/d/1pOzdB1qtofdgMohPnSUuOJVTPVFy2oRh/view?usp=sharing), [`dev_clean.tsv`](https://drive.google.com/file/d/1NuVwe687jLBFkDLRy1EV2A2uXyV_kBo2/view?usp=sharing), [`dev_clean.phn`](https://drive.google.com/file/d/1cq_gbS-UgCALOoaE5QmhWrhkTdXuc_Uc/view?usp=sharing). Note that the label-rate is 100 (10ms).
 
 ### Phoneme-unit Tokenizer for Text
 This tokenizer is used to phonemize the unpaired text data to (phonemes, letters) paired data, following a `words -> phonemes -> upsampled phones` pipeline.
@@ -220,4 +220,32 @@ We train a [FastSpeech](https://arxiv.org/abs/2006.04558)-like model (instead ge
     bash speechlm/scripts/tokenizer_fastT2U/generate.sh $model_path $gen_set
     ```
 We provided train/generate data examples in [`dataset/LibriSpeech/fast_phone2unit`](dataset/LibriSpeech/fast_phone2unit), and the model checkpoint [here](https://drive.google.com/file/d/1e-aYf8hPXuly8DEvNg5SISOlcUxsgED0/view?usp=sharing).
+
+## License
+
+This project is licensed under the license found in the LICENSE file in the root directory of this source tree.
+Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorch/fairseq).
+
+[Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct)
+
+## Reference
+
+If you find our work is useful in your research, please cite the following paper:
+
+```bibtex
+@article{zhang2022speechlm,
+  title   = {SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data},
+  author  = {Zhang, Ziqiang and Chen, Sanyuan and Zhou, Long and Wu, Yu and Ren, Shuo and Liu, Shujie and Yao, Zhuoyuan and Gong, Xun and Dai, Lirong and Li, Jinyu and Wei, Furu},
+  eprint={2209.15329},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  year={2022}
+}
+```
+
+### Contact Information
+
+For help or issues using SpeechT5 models, please submit a GitHub issue.
+
+For other communications related to SpeechT5, please contact Long Zhou (`lozhou@microsoft.com`).
 
