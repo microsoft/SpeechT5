@@ -68,7 +68,10 @@ pip install sacrebleu==1.5.1
 
 ## ASR on LibriSpeech
 ### Data preparation
-Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`. We also provided exmples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/). You should make sure the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/dict.ltr.txt) is the same as that used for the pre-trained model.
+Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare `train.tsv` and `train.ltr`. You should make sure the vocabulary [`dict.ltr.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/dict.ltr.txt) is the same as that used for the pre-trained model.
+
+Put yout prepared data into `$data_dir`, we provided eamples in [`dataset/LibriSpeech/asr`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/asr/). 
+
 ### Fine-tune a CTC model
 - Fine-tune the base model
     ```bash
@@ -114,12 +117,14 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
 ## ST on CoVoST-2
 ### Data Preparation
 1. Download [Common Voice audio clips](https://commonvoice.mozilla.org/en/datasets) (version 4) for English into `$cv_root/en`.
-2. Get data manifest. The following script will convert mp3 files to waveform, create tsv file containing speech/translation paires, create data config files. We provide examples [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/CommonVoice/v4/en/en-de).
+2. Get data manifest. The following script will convert mp3 files to waveform, create tsv file containing speech/translation paires, create data config files.
     ```bash
     lang=de # ca,ar,tr
     cv_root=dataset/CommonVoice/v4
     bash speechlm/data_process/prepare_covost2_enxx.sh $lang $cv_root
     ```
+    We provided examples in [`dataset/CommonVoice/v4/en/en-de`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/CommonVoice/v4/en/en-de).
+
 ### Fine-tune a encoder-decoder model
 - Fine-tune the Base model (fine-tuned models will be stored in `$mount/exp/finetune_covost`).
 
@@ -151,18 +156,9 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
     bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
     ```
 
-<!-- ## Pre-training
-### Data preparation
-We put examples in [dataset](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset).
-- **Speech:** please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.tsv)
-- **Phoneme units for speech:** use phoneme-unit tokenizer to process the speech to prepare [`train.phn`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/train_sample100.phn)
-- **Hidden units for speech:** use hidden-unit tokenizer to process the speech to prepare [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km)
-> The hidden-unit tokenizer used in this word is [a K-means model on the top of the Hubert Base model](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
-- Create dict for the target units [`dict.phn.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/phone_unit/dict.phn.txt) or [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt)
 
-- **Text (phoneme-unit):**  -->
 ## Pre-train
-Please follow the instructions of [Tokenizer](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/README.md#Tokenizers) to prepare the pre-training data.
+Please follow the instructions of [Tokenizer](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/README.md#Tokenizers) to prepare the pre-training data. We provided examples in [`dataset`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset).
 - SpeechLM-P Base model
 
     Models will be stored in `$mount/pretrain`.
@@ -193,8 +189,7 @@ Please follow the instructions of [Tokenizer](https://github.com/microsoft/Speec
 This tokenizer is used to produce the frame-laigned phonemes for unlabeled speech, which is actually a hybrid HMM ASR model.
 
 In the Base setting, we use 100h LibriSpeech labeled data to train the HMM model under Kaldi recipe, then decode the unpaired speech and get the aligned phonemes from the lattice.
-
-We provide the processed phonemes of 960h speech here: [`train_960.tsv`](), [`train_960.phn`](), [`dev_clean.tsv`](), [`dev_clean.phn`](). Note that the label-rate is 100 (10ms).
+Here we provided the processed phonemes of 960h speech here: [`train_960.tsv`](), [`train_960.phn`](), [`dev_clean.tsv`](), [`dev_clean.phn`](). Note that the label-rate is 100 (10ms).
 
 ### Phoneme-unit Tokenizer for Text
 This tokenizer is used to phonemize the unpaired text data to (phonemes, letters) paired data, following a `words -> phonemes -> upsampled phones` pipeline.
@@ -208,4 +203,21 @@ bash speechlm/data_process/prepare_phn2ltr_librilm.sh
 ### Hidden-unit Tokenizer for Speech
 Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare 1) wav recordings [`train.tsv`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.tsv) and 2) corresponding hidden-units [`train.km`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/train_sample100.km), and 3) unit vocabulary [`dict.km.txt`](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM/dataset/LibriSpeech/hidden_unit/dict.km.txt).
 
-<!-- ### Hidden-unit Tokenizer for Text -->
+### Hidden-unit Tokenizer for Text
+This tokenizer is used to produce the speech-style hidden units from unpaired text.
+We train a [FastSpeech](https://arxiv.org/abs/2006.04558)-like model (instead generating continuous spectrum in the original paper, here we generate discrete units) on a small amount of ASR data ([100 hrs LibriSpeech](http://www.openslr.org/12)) as the tokenizer.
+
+1. Convert asr transcripts to phoneme sequence.
+2. Extract hidden-units from speech, using the [Hidden-unit Tokenizer for Speech](#hidden-unit-tokenizer-for-speech).
+3. Train the [model](speechlm/models/fasttext2unit.py) on the paired data:
+    ```bash
+    data_dir=dataset/LibriSpeech/fast_phone2unit
+    bash SpeechLM/speechlm/scripts/tokenizer_fastT2U/train_s_5e-4.sh $data_dir
+    ```
+4. [Generate](speechlm/scripts/tokenizer_fastT2U/generate.sh) hidden units for a large text corpus:
+    ```bash
+    gen_set=dataset/LibriSpeech/fast_phone2unit/genset
+    bash speechlm/scripts/tokenizer_fastT2U/generate.sh $model_path $gen_set
+    ```
+We provided train/generate data examples in [`dataset/LibriSpeech/fast_phone2unit`](dataset/LibriSpeech/fast_phone2unit), and the model checkpoint [here](https://drive.google.com/file/d/1e-aYf8hPXuly8DEvNg5SISOlcUxsgED0/view?usp=sharing).
+

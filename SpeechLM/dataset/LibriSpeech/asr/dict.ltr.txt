@@ -1,1 +1,1 @@
-../../LibriLM/bin-idx/dict.ltr.txt
+../../LibriLM/phone_unit/bin-idx/dict.ltr.txt
