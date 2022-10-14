@@ -245,7 +245,7 @@ If you find our work is useful in your research, please cite the following paper
 
 ### Contact Information
 
-For help or issues using SpeechT5 models, please submit a GitHub issue.
+For help or issues using SpeechLM models, please submit a GitHub issue.
 
-For other communications related to SpeechT5, please contact Long Zhou (`lozhou@microsoft.com`).
+For other communications related to SpeechLM, please contact Long Zhou (`lozhou@microsoft.com`).
 
