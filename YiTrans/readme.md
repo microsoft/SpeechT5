@@ -4,7 +4,7 @@
 > Code is being merged to this repository, thanks for your attention
 
 ## Setup
-```
+```bash
 git clone https://github.com/microsoft/SpeechT5.git
 git submodule update --init YiTrans/fairseq
 cd YiTrans/fairseq
@@ -47,26 +47,39 @@ For example of pre-training the PT36 model, please follow these steps:
 Step 0: Download the released [Hubert model](https://dl.fbaipublicfiles.com/hubert/hubert_large_ll60k.pt) and [mBART model](https://dl.fbaipublicfiles.com/fairseq/models/mbart50/mbart50.pretrained.tar.gz) model.
 
 Step 1: Pre-training with unlabeled speech data and monolingual/bilingual text data 
-```
+```bash
 bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step1.sh
 ```
 
 Step 2: Pre-training with ASR dat and domain-filtered bilingual text data 
-```
+```bash
 bash YiTrans/exp_scripts/pretrain/pretrain_pt36_adaptor_step2.sh
 ```
 Other configurations like training PT48 can also be fould in ./YiTrans/exp_scripts/pretrain, you might need to modify the PATH variables in .sh files to adjust your data.
 
 ## Fine-tune
 For example of pre-training En-De ST model on MuST-C dataset,
-```
+```bash
 bash YiTrans/exp_scripts/finetune_ST/en-de/jtst_pt36s2_mustc.sh
 ```
 Other configurations like different translation directions or datasets could be found in ./YiTrans/exp_scripts/finetune_ST, you might need to modify the PATH variables in .sh files to adjust your data.
 
+## Cascaded system
+You can also build a cascaded ST system (ASR+MT) with our codebase.
+1. ASR model: fine-tune from the cascade of [Hubert Large](https://dl.fbaipublicfiles.com/hubert/hubert_large_ll60k.pt) and [mBART model](https://dl.fbaipublicfiles.com/fairseq/models/mbart50/mbart50.pretrained.tar.gz):
+    ```bash
+    # change the mbart_path/hubert_path to your own in the *.sh
+    bash YiTrans/exp_scripts/finetune_ASR/finetune_hubert24_mbart24_en.sh
+    ```
+    Check the [`.sh`](exp_scripts/finetune_ASR/finetune_hubert24_mbart24_en.sh) file for more information about the configuration.
 
+2. MT model: fine-tune from [mBART model](https://dl.fbaipublicfiles.com/fairseq/models/mbart50/mbart50.pretrained.tar.gz):
 
-
+    ```bash
+    # change the mbart_path to your own in the *.sh
+    bash YiTrans/exp_scripts/finetune_MT/finetune_mbart_en-de.sh
+    ```
+    Check the [`.sh`](exp_scripts/finetune_MT/finetune_mbart_en-de.sh) file for more information about the configuration.
 
 
 ## Reference

@@ -200,7 +200,7 @@ class JointEDConfig(HubertConfig):
 class JointEDModel(HubertModel):
     def __init__(
         self,
-        cfg: HubertConfig,
+        cfg: JointEDConfig,
         task_cfg: JointPretrainingConfig,
         dictionaries: List[Dictionary],
         text_dictionary: Dictionary = None,
