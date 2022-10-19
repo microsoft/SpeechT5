@@ -26,89 +26,44 @@ from fairseq.models.hubert import HubertAsrConfig, HubertCtc, HubertEncoder
 from speechut.modules import TransformerDecoderBaseScriptable
 
 @dataclass
-class SpeechUTASRConfig(HubertAsrConfig):
-    add_decoder: bool = field(
-        default=True,
-        metadata={"help": "add decoder for fine-tune"},
-    )
+class SpeechUTS2TConfig(HubertAsrConfig):
     decoder_layerdrop: float = field(
         default=0.1,
         metadata={"help": "probability of dropping a decoder layer in hubert"},
     )
 
-@register_model("speechut_asr", dataclass=SpeechUTASRConfig)
-class SpeechUTASR(BaseFairseqModel):
-    """
-    A encoder-ctc-decoder model if cfg.add_decoder is True, or a encoder-ctc model
-    """
-    def __init__(self, cfg: SpeechUTASRConfig, encoder: FairseqEncoder):
+@register_model("speechut_st_legacy", dataclass=SpeechUTS2TConfig)
+class SpeechUTS2T(BaseFairseqModel):
+    """An encoder-decoder model."""
+    def __init__(self, cfg: SpeechUTS2TConfig, encoder: FairseqEncoder):
         super().__init__()
         self.cfg = cfg
         self.encoder = encoder
-        if not cfg.add_decoder:
-            self.encoder.w2v_model.decoder = None
 
     def upgrade_state_dict_named(self, state_dict, name):
         super().upgrade_state_dict_named(state_dict, name)
         return state_dict
     
     @classmethod
-    def build_model(cls, cfg: SpeechUTASRConfig, task: FairseqTask):
+    def build_model(cls, cfg: SpeechUTS2TConfig, task: FairseqTask):
         """Build a new model instance."""
         encoder = SpeechUTEncoder(cfg, task)
         return cls(cfg, encoder)
 
     def forward(self, source, padding_mask, prev_output_tokens, **kwargs):
         encoder_out = self.encoder(source, padding_mask, **kwargs)
-
-        x = self.encoder.final_dropout(encoder_out['encoder_out'][0])  # (T, B, C)
-        if self.encoder.proj:
-            x = self.encoder.proj(x)
-        if self.encoder.conv_ctc_proj:
-            padding_mask = self.encoder.w2v_model.downsample_ctc_padding_mask(encoder_out["encoder_padding_mask"][0])
-        else:
-            padding_mask = encoder_out["encoder_padding_mask"]
-
         decoder_out = self.encoder.w2v_model.decoder(
             prev_output_tokens, encoder_out=encoder_out, **kwargs
-        ) if self.cfg.add_decoder else None
-        
-        return {
-            "encoder_out_ctc": x,           # (T, B, C), for CTC loss
-            "padding_mask": padding_mask,   # (B, T), for CTC loss
-            "decoder_out": decoder_out,     # for ED loss
-        }
+        )
+        return decoder_out
     
     def forward_decoder(self, prev_output_tokens, **kwargs):
         return self.encoder.w2v_model.decoder(prev_output_tokens, **kwargs)
 
-    def get_logits(self, net_output):
-        """For CTC decoding"""
-        logits = net_output["encoder_out"]
-        padding = net_output["encoder_padding_mask"]
-        if padding is not None and padding.any():
-            padding = padding.T
-            logits[padding][..., 0] = 0
-            logits[padding][..., 1:] = float("-inf")
-
-        return logits
-
     def get_normalized_probs(self, net_output, log_probs, sample=None):
-        """For 1) computing CTC loss, 2) decoder decoding."""
-
-        if "encoder_out_ctc" in net_output:
-            logits = net_output["encoder_out_ctc"]
-        else:
-            return self.encoder.w2v_model.decoder.get_normalized_probs(net_output, log_probs, sample)
+        """For decoder decoding."""
+        return self.encoder.w2v_model.decoder.get_normalized_probs(net_output, log_probs, sample)
         
-        if isinstance(logits, list):
-            logits = logits[0]
-
-        if log_probs:
-            return utils.log_softmax(logits.float(), dim=-1)
-        else:
-            return utils.softmax(logits.float(), dim=-1)
-
     @property
     def decoder(self):
         self.encoder.w2v_model.decoder
@@ -117,9 +72,10 @@ class SpeechUTASR(BaseFairseqModel):
 class SpeechUTEncoder(FairseqEncoder):
     """
     Modified from fairseq.models.hubert.hubert_asr.HubertEncoder
-    1. make it compatible with encoder-decoder model
+    1. make it compatible with fairseq speech_to_text task
+    2. make it compatible with encoder-decoder model
     """
-    def __init__(self, cfg: SpeechUTASRConfig, task):
+    def __init__(self, cfg: SpeechUTS2TConfig, task):
         self.apply_mask = cfg.apply_mask
 
         arg_overrides = {
@@ -165,7 +121,7 @@ class SpeechUTEncoder(FairseqEncoder):
             if isinstance(w2v_args, Namespace):
                 cfg.w2v_args = w2v_args = convert_namespace_to_omegaconf(w2v_args)
 
-        assert cfg.normalize == w2v_args.task.normalize, (
+        assert task.data_cfg.standardize_audio() == w2v_args.task.normalize, (
             "Fine-tuning works best when data normalization is the same. "
             "Please check that --normalize is set or unset for "
             "both pre-training and here"
@@ -196,38 +152,30 @@ class SpeechUTEncoder(FairseqEncoder):
         self.freeze_finetune_updates = cfg.freeze_finetune_updates
         self.num_updates = 0
 
-        self.conv_ctc_proj = False
-        if task.target_dictionary is not None:
-            if hasattr(self.w2v_model, "unit_encoder_ctc_head"):
-                self.proj = self.w2v_model.unit_encoder_ctc_head
-                self.conv_ctc_proj = True
-            else:
-                self.proj = Linear(d, len(task.target_dictionary))
-        elif getattr(cfg, "decoder_embed_dim", d) != d:
-            self.proj = Linear(d, cfg.decoder_embed_dim)
-        else:
-            self.proj = None
-    
     def set_num_updates(self, num_updates):
         """Set the number of parameters updates."""
         super().set_num_updates(num_updates)
         self.num_updates = num_updates
+    
+    def forward(self, src_tokens=None, src_lengths=None, **kwargs):
 
-    def forward(self, source, padding_mask, tbc=True, **kwargs):
         w2v_args = {
-            "source": source,
-            "padding_mask": padding_mask,
+            "source": src_tokens,
+            "padding_mask": lengths_to_padding_mask(src_lengths),
             "mask": self.apply_mask and self.training,
         }
+
         ft = self.freeze_finetune_updates <= self.num_updates
+
         with torch.no_grad() if not ft else contextlib.ExitStack():
             x, padding_mask = self.w2v_model.extract_features(**w2v_args)
-            if tbc:
-                # B x T x C -> T x B x C
-                x = x.transpose(0, 1)
+            # B x T x C -> T x B x C
+            x = x.transpose(0, 1)
+
         return {
             "encoder_out": [x],  # T x B x C
             "encoder_padding_mask": [padding_mask],  # B x T
+            "padding_mask": [padding_mask],
         }
     
     def forward_torchscript(self, net_input):
@@ -235,7 +183,13 @@ class SpeechUTEncoder(FairseqEncoder):
 
         Forward the encoder out.
         """
-        x, padding_mask = self.w2v_model.extract_features(**net_input, mask=False)
+        _net_input = {
+            "source": net_input["src_tokens"],
+            "padding_mask": lengths_to_padding_mask(net_input["src_lengths"]),
+            "mask": False,
+        }
+
+        x, padding_mask = self.w2v_model.extract_features(**_net_input)
         # B x T x C -> T x B x C
         x = x.transpose(0, 1)
 
