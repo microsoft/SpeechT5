@@ -50,5 +50,7 @@ class SpeechLMEncoder(HubertEncoder):
             **kwargs,
         )
         if self.conv_ctc_proj:
-            results["padding_mask"] = self.w2v_model.downsample_ctc_padding_mask(results["padding_mask"])
+            padding_mask = self.w2v_model.downsample_ctc_padding_mask(results["padding_mask"])
+            results["encoder_padding_mask"] = padding_mask
+            results["padding_mask"] = padding_mask
         return results
