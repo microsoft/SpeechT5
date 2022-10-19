@@ -43,6 +43,3 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   checkpoint.save_dir=$MODEL_DIR \
   hydra.run.dir=$MODEL_DIR \
   hydra.job.name=${exp_name}
-
-# model_path=/mnt/default/v-ziqzhang/data/speechut/exp/pretrain/base_speechut4asr_32gpu_1accum/checkpoint_298_400000.pt
-# data_dir=/mnt/default/v-ziqzhang/data/stbert/data/librispeech/hubert_release_iter2_layer9_kmeans/local

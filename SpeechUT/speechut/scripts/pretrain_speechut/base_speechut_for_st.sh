@@ -1,19 +1,20 @@
 # ####################################
 # SpeechUT Base model #
 # ####################################
-[ $# -lt 2 ] && echo "Usage: $0 <data_dir> <text_data_dir> [mount=${PWD}] [world_size=32] [update_freq=1]" && exit 1
+[ $# -lt 3 ] && echo "Usage: $0 <data_dir> <text_data_dir> <lang> [mount=${PWD}] [world_size=32] [update_freq=1]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 DATA_DIR=$1
 TEXT_DATA_DIR=$2
-mount=$3
-world_size=$4
-update_freq=$5
+lang=$3
+mount=$4
+world_size=$5
+update_freq=$6
 [ -z $mount ] && mount=${PWD}
 [ -z $world_size ] && world_size=32
 [ -z $update_freq ] && update_freq=1
 
 CODE_ROOT=${PWD}
-MODEL_DIR="${mount}/exp/pretrain/base_speechut4asr_${world_size}gpu_${update_freq}accum"
+MODEL_DIR="${mount}/exp/pretrain/base_speechut4en${lang}_${world_size}gpu_${update_freq}accum"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
@@ -27,8 +28,12 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.label_dir=$DATA_DIR \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   \
-  dataset.train_subset=\"train_960+pseudo_libritext.kmu-ltr+merge_960.kmu-none\" \
-  dataset.valid_subset=\"dev_clean+dev.kmu-ltr+dev.kmu-none\" \
+  model.add_text_ctc=false \
+  model.share_decoder_input_output_embed=true \
+  criterion.u2t_ctc_weight=0 \
+  \
+  dataset.train_subset=\"train_960,mustcuns_de+pseudo_wmt17_ende.kmu-spm+train_960.kmu-none,mustcuns_de.kmu-none\" \
+  dataset.valid_subset=\"dev_clean+pseudo_valid.kmu-spm+dev.kmu-none\" \
   dataset.num_workers=0 \
   dataset.max_tokens=1400000 \
   distributed_training.distributed_world_size=${world_size} \
@@ -37,4 +42,4 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
   hydra.run.dir=$MODEL_DIR \
-  hydra.job.name=base_speechut4asr_${world_size}gpu_${update_freq}accum
+  hydra.job.name=base_speechut4en${lang}_${world_size}gpu_${update_freq}accum
