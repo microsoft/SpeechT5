@@ -29,7 +29,8 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   \
   model.add_text_ctc=false \
-  model.share_decoder_input_output_embed=true \
+  model.text_transformer.share_decoder_input_output_embed=true \
+  criterion.u2t_ed_weight=1.0 \
   criterion.u2t_ctc_weight=0 \
   \
   dataset.train_subset=\"train_960,mustcuns_de+pseudo_wmt17_ende.kmu-spm+train_960.kmu-none,mustcuns_de.kmu-none\" \
@@ -42,4 +43,5 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
   hydra.run.dir=$MODEL_DIR \
-  hydra.job.name=base_speechut4en${lang}_${world_size}gpu_${update_freq}accum
+  hydra.job.name=base_speechut4en${lang}_${world_size}gpu_${update_freq}accum \
+  checkpoint.restore_file=/mnt/default/v-ziqzhang/data/speechut/exp/pretrain/base_speechut4ende_32gpu_1accum/checkpoint_217_400000.pt \

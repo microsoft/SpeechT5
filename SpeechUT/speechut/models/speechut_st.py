@@ -27,10 +27,10 @@ from speechut.modules import TransformerDecoderBaseScriptable
 
 @dataclass
 class SpeechUTS2TConfig(HubertAsrConfig):
-    decoder_layerdrop: float = field(
-        default=0.1,
-        metadata={"help": "probability of dropping a decoder layer in hubert"},
-    )
+    ### the following config is only for the compatibility to fairseq speech_to_text task
+    input_feat_per_channel: Any = None
+    input_channels: Any = None
+    speaker_to_id: Any = None
 
 @register_model("speechut_st_legacy", dataclass=SpeechUTS2TConfig)
 class SpeechUTS2T(BaseFairseqModel):
@@ -50,8 +50,8 @@ class SpeechUTS2T(BaseFairseqModel):
         encoder = SpeechUTEncoder(cfg, task)
         return cls(cfg, encoder)
 
-    def forward(self, source, padding_mask, prev_output_tokens, **kwargs):
-        encoder_out = self.encoder(source, padding_mask, **kwargs)
+    def forward(self, src_tokens, src_lengths, prev_output_tokens, **kwargs):
+        encoder_out = self.encoder(src_tokens, src_lengths, **kwargs)
         decoder_out = self.encoder.w2v_model.decoder(
             prev_output_tokens, encoder_out=encoder_out, **kwargs
         )
@@ -66,7 +66,7 @@ class SpeechUTS2T(BaseFairseqModel):
         
     @property
     def decoder(self):
-        self.encoder.w2v_model.decoder
+        return self.encoder.w2v_model.decoder
 
 
 class SpeechUTEncoder(FairseqEncoder):
@@ -95,18 +95,6 @@ class SpeechUTEncoder(FairseqEncoder):
             "no_mask_channel_overlap": cfg.no_mask_channel_overlap,
             "encoder_layerdrop": cfg.layerdrop,
             "feature_grad_mult": cfg.feature_grad_mult,
-            "add_decoder": cfg.add_decoder,
-            "text_transformer": {
-                "dropout": cfg.dropout,
-                "activation_dropout": cfg.activation_dropout,
-                "attention_dropout": cfg.attention_dropout,
-                "encoder":{
-                    "layerdrop": cfg.layerdrop,
-                },
-                "decoder":{
-                    "layerdrop": cfg.decoder_layerdrop,
-                },
-            }
         }
 
         if cfg.w2v_args is None:
