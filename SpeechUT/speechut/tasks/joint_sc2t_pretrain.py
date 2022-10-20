@@ -382,9 +382,12 @@ class JointPretrainingConfig(FairseqDataclass):
         default=None,
         metadata={"help": "sentencepiece model path if using bpe tokenizer"},
     )
-
     text_cfg: TextPretrainingConfig = TextPretrainingConfig()
-
+    # For inference
+    ctc_weight: float = field(
+        default=0.0,
+        metadata={"help": "ctc weight during inference"},
+    )
 
 @register_task("joint_sc2t_pretraining", dataclass=JointPretrainingConfig)
 class Jsc2tPretrainingTask(FairseqTask):
@@ -839,6 +842,23 @@ class Jsc2tPretrainingTask(FairseqTask):
             self.dataset_to_epoch_iter[dataset] = epoch_iter
 
         return epoch_iter
+    
+    def build_generator(
+        self,
+        models,
+        args,
+        seq_gen_cls=None,
+        extra_gen_cls_kwargs=None,
+    ):
+        """Build ED-CTC generator for finet-tuned ASR model"""
+        from speechut.squence_generator import SequenceGenerator
+        extra_gen_cls_kwargs = {
+            "ctc_weight": self.cfg.ctc_weight,
+            **extra_gen_cls_kwargs
+        }
+        return super().build_generator(
+            models, args, seq_gen_cls=SequenceGenerator, extra_gen_cls_kwargs=extra_gen_cls_kwargs
+        )
 
     @classmethod
     def _get_size_ratios(cls, ids: List[str], sizes: List[int], alpha: float = 1.0):
