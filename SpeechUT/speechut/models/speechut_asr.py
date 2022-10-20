@@ -69,7 +69,7 @@ class SpeechUTASR(BaseFairseqModel):
         else:
             padding_mask = encoder_out["encoder_padding_mask"]
 
-        decoder_out = self.encoder.w2v_model.decoder(
+        decoder_out = self.decoder(
             prev_output_tokens, encoder_out=encoder_out, **kwargs
         ) if self.cfg.add_decoder else None
         
@@ -80,7 +80,7 @@ class SpeechUTASR(BaseFairseqModel):
         }
     
     def forward_decoder(self, prev_output_tokens, **kwargs):
-        return self.encoder.w2v_model.decoder(prev_output_tokens, **kwargs)
+        return self.decoder(prev_output_tokens, **kwargs)
 
     def get_logits(self, net_output):
         """For CTC decoding"""
@@ -99,7 +99,7 @@ class SpeechUTASR(BaseFairseqModel):
         if "encoder_out_ctc" in net_output:
             logits = net_output["encoder_out_ctc"]
         else:
-            return self.encoder.w2v_model.decoder.get_normalized_probs(net_output, log_probs, sample)
+            return self.decoder.get_normalized_probs(net_output, log_probs, sample)
         
         if isinstance(logits, list):
             logits = logits[0]
@@ -111,7 +111,7 @@ class SpeechUTASR(BaseFairseqModel):
 
     @property
     def decoder(self):
-        self.encoder.w2v_model.decoder
+        return self.encoder.w2v_model.decoder
 
 
 class SpeechUTEncoder(FairseqEncoder):
@@ -243,6 +243,10 @@ class SpeechUTEncoder(FairseqEncoder):
             "encoder_out" : [x],
             "encoder_padding_mask" : [padding_mask],
         }
+        if self.proj:
+            x = self.proj(x)
+            encoder_out["encoder_out_ctc"] = x
+
         return encoder_out
 
     def reorder_encoder_out(self, encoder_out, new_order):
