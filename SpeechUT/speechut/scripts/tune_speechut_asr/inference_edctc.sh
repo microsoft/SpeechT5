@@ -1,7 +1,7 @@
 #####################################
 # SpeechUT ASR model #
 #####################################
-[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.2]" && exit 1
+[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=10] [ctc_weight=0.2]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 model_path=$1

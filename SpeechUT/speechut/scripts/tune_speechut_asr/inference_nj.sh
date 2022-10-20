@@ -1,7 +1,7 @@
 #####################################
 # SpeechUT ASR model #
 #####################################
-[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.2]" && exit 1
+[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.2] [nj=40] [ngpu=8]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 model_path=$1
@@ -9,11 +9,15 @@ DATA_DIR=$2
 gen_set=$3
 beam_size=$4
 ctc_weight=$5
+nj=$6
+ngpu=$7
 [ -z $gen_set ] && gen_set="dev_other"
 [ -z $beam_size ] && beam_size=10
 [ -z $ctc_weight ] && ctc_weight=0.2
 [ $ctc_weight == 0 ] && [ $beam_size != 1 ] && echo "Change beam size to 1 as no ctc-decoding used..." && beam_size=1
 [ $ctc_weight != 0 ] && extra="--batch-size 1"
+[ -z $nj ] && nj=32
+[ -z $ngpu ] && ngpu=8
 
 src_dir=${model_path%/*}
 cpt=${model_path##*/}
@@ -21,9 +25,9 @@ cpt=${cpt%.*}
 
 CODE_ROOT=${PWD}
 
-world_size=8
-for rank in $(seq 0 7); do
-    export CUDA_VISIBLE_DEVICES=$rank
+world_size=$nj
+for rank in $(seq 0 $((nj - 1))); do
+    export CUDA_VISIBLE_DEVICES=$((rank % $ngpu))
     for subset in ${gen_set//,/ }; do
         results_path=$src_dir/decode_${cpt}/beam${beam_size}_ctc${ctc_weight}/${subset}_${world_size}_${rank}
         [ ! -d $results_path ] && mkdir -p $results_path
@@ -58,7 +62,6 @@ wait
 
 
 for subset in ${gen_set//,/ }; do
-    results_path=$src_dir/decode_${cpt}/beam${beam_size}_ctc${ctc_weight}/${subset}_${world_size}_${rank}
-    echo $results_path
-    tail -n 1 $results_path/generate-*.txt
+    results_dir=$src_dir/decode_${cpt}/beam${beam_size}_ctc${ctc_weight}
+    cat $results_dir/${subset}_${world_size}_*/generate-${subset}.txt | grep -v "^Generate" > $results_dir/generate-${subset}.all.txt
 done
