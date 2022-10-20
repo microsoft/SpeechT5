@@ -42,4 +42,4 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
   hydra.run.dir=$MODEL_DIR \
-  hydra.job.name=${exp_name}
+  hydra.job.name=edctc40k_from_${cpt}_bz2.6m_lr1e-5

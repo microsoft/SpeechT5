@@ -92,7 +92,7 @@ model:
   activation_fn: "gelu"
   encoder_layers: 6
   encoder_attention_heads: 8
-  encoder_layerdrop: 0.1
+  encoder_layerdrop: 0.0
   dropout_input: 0.1
   dropout_features: 0.1
   dropout: 0.1
