@@ -388,6 +388,10 @@ class JointPretrainingConfig(FairseqDataclass):
         default=0.0,
         metadata={"help": "ctc weight during inference"},
     )
+    lm_dict: Optional[str] = field(
+        default="dict.txt",
+        metadata={"help": "dict used for decoding with language model, should be in cfg.data/"},
+    )
 
 @register_task("joint_sc2t_pretraining", dataclass=JointPretrainingConfig)
 class Jsc2tPretrainingTask(FairseqTask):
@@ -854,6 +858,7 @@ class Jsc2tPretrainingTask(FairseqTask):
         from speechut.squence_generator import SequenceGenerator
         extra_gen_cls_kwargs = {
             "ctc_weight": self.cfg.ctc_weight,
+            "lm_dict": Dictionary.load(os.path.join(self.cfg.data, self.cfg.lm_dict)),
             **extra_gen_cls_kwargs
         }
         return super().build_generator(
