@@ -1,0 +1,14 @@
+bpe_tokenizer:
+  bpe: sentencepiece
+  sentencepiece_model: spm_unigram10000.model
+
+sampling_alpha: 1.0
+shuffle: false
+use_audio_input: true
+use_sample_rate: 16000
+
+vocab_filename: dict.spm.txt
+
+# required by speech_to_text task but never used  
+input_channels: 1
+input_feat_per_channel: 1
