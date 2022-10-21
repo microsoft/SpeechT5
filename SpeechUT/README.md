@@ -63,13 +63,36 @@ Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorc
 
 
 ## Fine-tune ST on MuST-C
+### Data preparation
 
-    Updating
+ST models are fine-tuned with [fairseq speech-to-text](https://github.com/facebookresearch/fairseq/tree/main/examples/speech_to_text) task, so just follow the data preparation instructions [here](https://github.com/facebookresearch/fairseq/tree/main/examples/speech_to_text#data-preparation).
+To fine-tune our released models, you should use the same sentecepiece models and dictionaries as ours:
+
+- En-De: [sentencepiece_model](dataset/MuSTC/en_de/spm_unigram10000.model), [dict](dataset/MuSTC/en_de/dict.spm.txt)
+- En-Es: [sentencepiece_model](dataset/MuSTC/en_es/spm_unigram10000.model), [dict](dataset/MuSTC/en_es/dict.spm.txt)
+- En-Fr: [sentencepiece_model](dataset/MuSTC/en_fr/spm_unigram10000.model), [dict](dataset/MuSTC/en_fr/dict.spm.txt)
+
+### Fine-tune an encoder-decoder model
+
+```bash
+# Usage: speechut/scripts/tune_speechut_st/finetune_base_mustc_enxx.sh <model_path> <data_dir> <lang> <cpt-tag> [mount=$PWD] [world_size=8] [update_freq=4]
+model_path=path/to/your/pre-trained/model
+data_dir=dataset/MuSTC/en-de
+bash speechut/scripts/tune_speechut_st/finetune_base_mustc_enxx.sh $model_path $data_dir de tag400k
+```
+
+### Decode
 
 
 ## Pre-train
 
-    Updating
+
+```bash
+# Usage: speechut/scripts/pretrain_speechut/base_speechut_for_st.sh <data_dir> <text_data_dir> <lang> [mount=$PWD] [world_size=32] [update_freq=1]
+data_dir=
+text_data_dir=
+bash speechut/scripts/pretrain_speechut/base_speechut_for_st.sh $data_dir $text_data_dir de
+```
 
 
 ## T2U Generator
