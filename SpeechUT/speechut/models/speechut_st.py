@@ -7,23 +7,23 @@
 # Licensed under The MIT License [see LICENSE for details]
 # ----------------------------------------------------------------------------
 
+import logging
 import contextlib
 import torch
 import torch.nn as nn
 from argparse import Namespace
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
-from fairseq import checkpoint_utils, tasks, utils
+from fairseq import checkpoint_utils, tasks
 from fairseq.models import BaseFairseqModel, register_model
-from fairseq.models.fairseq_decoder import FairseqDecoder
 from fairseq.models.fairseq_encoder import FairseqEncoder
 from fairseq.tasks import FairseqTask
-from fairseq.dataclass import ChoiceEnum
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.data.data_utils import lengths_to_padding_mask
 
-from fairseq.models.hubert import HubertAsrConfig, HubertCtc, HubertEncoder
-from speechut.modules import TransformerDecoderBaseScriptable
+from fairseq.models.hubert import HubertAsrConfig
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class SpeechUTS2TConfig(HubertAsrConfig):
@@ -125,8 +125,11 @@ class SpeechUTEncoder(FairseqEncoder):
 
         model = pretrain_task.build_model(w2v_args.model, from_checkpoint=True)
         if state is not None and not cfg.no_pretrained_weights:
-            # set strict=False because we omit some modules
-            model.load_state_dict(state["model"], strict=False)
+            try:            
+                model.load_state_dict(state["model"], strict=True)
+            except Exception as e:
+                logger.warn(e)
+                model.load_state_dict(state["model"], strict=False)
 
         model.remove_pretraining_modules()
 

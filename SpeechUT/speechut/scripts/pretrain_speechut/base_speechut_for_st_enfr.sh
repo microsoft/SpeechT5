@@ -1,7 +1,7 @@
 # ####################################
 # SpeechUT Base model #
 # ####################################
-[ $# -lt 3 ] && echo "Usage: $0 <data_dir> <text_data_dir> <lang=de/es> [mount=${PWD}] [world_size=32] [update_freq=1]" && exit 1
+[ $# -lt 3 ] && echo "Usage: $0 <data_dir> <text_data_dir> [lang=fr] [mount=${PWD}] [world_size=32] [update_freq=1]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 DATA_DIR=$1
 TEXT_DATA_DIR=$2
@@ -9,6 +9,7 @@ lang=$3
 mount=$4
 world_size=$5
 update_freq=$6
+[ -z $lang ] && lang=fr
 [ -z $mount ] && mount=${PWD}
 [ -z $world_size ] && world_size=32
 [ -z $update_freq ] && update_freq=1
@@ -29,14 +30,14 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   \
   model.add_text_ctc=false \
-  model.text_transformer.share_decoder_input_output_embed=true \
   criterion.u2t_ed_weight=1.0 \
   criterion.u2t_ctc_weight=0 \
   \
-  dataset.train_subset=\"train_960,mustcuns_${lang}+pseudo_wmt_en${lang}.kmu-spm+train_960.kmu-none,mustcuns_${lang}.kmu-none\" \
+  dataset.train_subset=\"train_960,pretrain_mustc+pseudo_wmt14_enfr.kmu-spm+train_960.kmu-none,pretrain_mustc.kmu-none\" \
   dataset.valid_subset=\"dev_clean+pseudo_valid.kmu-spm+dev.kmu-none\" \
   dataset.num_workers=0 \
   dataset.max_tokens=1400000 \
+  optimization.max_update=600000 \
   distributed_training.distributed_world_size=${world_size} \
   optimization.update_freq=[${update_freq}] \
   \

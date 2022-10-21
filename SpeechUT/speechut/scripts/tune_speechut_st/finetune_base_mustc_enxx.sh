@@ -1,7 +1,7 @@
 # ####################################
 # SpeechUT Base model #
 # ####################################
-[ $# -lt 4 ] && echo "Usage: $0 <model_path> <data_dir> <lang> <cpt-tag> [mount=${PWD}] [world_size=8] [update_freq=4]" && exit 0
+[ $# -lt 4 ] && echo "Usage: $0 <model_path> <data_dir> <lang> <cpt-tag> [mount=${PWD}] [world_size=8] [update_freq=4/6]" && exit 0
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 w2v_path=$1
@@ -71,7 +71,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/train.py ${DATA_DIR} \
     --log-interval 100 \
     --save-interval 1 \
     --keep-last-epochs 5 \
-    --keep-best-checkpoints 5 \
+    --keep-best-checkpoints 10 \
     \
     2>&1 | tee ${MODEL_DIR}/train_en${lang}.log
 
