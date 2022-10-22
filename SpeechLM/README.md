@@ -201,7 +201,7 @@ The following script will download LibriSpeech LM corpus and produce the require
 bash speechlm/data_process/prepare_phn2ltr_librilm.sh
 ```
 ### Hidden-unit Tokenizer for Speech
-Please follow the steps of wav2vec 2.0 manifest [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) to prepare 1) wav recordings [`train.tsv`](dataset/LibriSpeech/hidden_unit/train_sample100.tsv) and 2) corresponding hidden-units [`train.km`](dataset/LibriSpeech/hidden_unit/train_sample100.km), and 3) unit vocabulary [`dict.km.txt`](dataset/LibriSpeech/hidden_unit/dict.km.txt).
+Please follow the steps of data preparation for HuBERT [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert#data-preparation) to prepare 1) wav recordings [`train.tsv`](dataset/LibriSpeech/hidden_unit/train_sample100.tsv) and 2) corresponding hidden-units [`train.km`](dataset/LibriSpeech/hidden_unit/train_sample100.km), and 3) unit vocabulary [`dict.km.txt`](dataset/LibriSpeech/hidden_unit/dict.km.txt).
 
 ### Hidden-unit Tokenizer for Text
 This tokenizer is used to produce the speech-style hidden units from unpaired text.
