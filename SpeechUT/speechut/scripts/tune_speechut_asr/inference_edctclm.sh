@@ -1,7 +1,7 @@
 #####################################
 # SpeechUT ASR model #
 #####################################
-[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.3] [lm_weight=0.7] [lm_path]" && exit 1
+[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.3] [lm_weight=0.7] [lm_path] [--normalize]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 model_path=$1
@@ -11,17 +11,15 @@ beam_size=$4
 ctc_weight=$5
 lm_weight=$6
 lm_path=$7
-world_size=$8
-rank=$9
+extra=$8
+[ -z $extra ] && echo "Assert decoding base model! If you are decoding large model, please add '--normalize' at the end..."
 [ -z $gen_set ] && gen_set="dev_other"
 [ -z $beam_size ] && beam_size=30
 [ -z $ctc_weight ] && ctc_weight=0.3
 [ -z $lm_weight ] && lm_weight=0.7
 [ -z $lm_path ] && lm_path="/mnt/default/v-junyiao/librispeech/lm/lm_ctc_form/checkpoint_best.pt"
-[ -z $world_size ] && world_size=1
-[ -z $rank ] && rank=0
 [ $ctc_weight == 0 ] && [ $beam_size != 1 ] && echo "Change beam size to 1 and lm_weight to 0 as no ctc-decoding used..." && beam_size=1 && lm_weight=0
-[ $ctc_weight != 0 ] && extra="--batch-size 1"
+[ $ctc_weight != 0 ] && extra="$extra --batch-size 1"
 
 src_dir=${model_path%/*}
 cpt=${model_path##*/}
@@ -56,7 +54,6 @@ for subset in ${gen_set//,/ }; do
     --results-path ${results_path} \
     \
     --scoring wer --max-len-a 0.00078125 --max-len-b 200 \
-    --distributed-world-size ${world_size} --distributed-rank ${rank} \
     &
 done
 wait
