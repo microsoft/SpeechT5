@@ -71,7 +71,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/train.py ${DATA_DIR} \
     --log-interval 100 \
     --save-interval 1 \
     --keep-last-epochs 5 \
-    --keep-best-checkpoints 10 \
+    --keep-best-checkpoints 5 \
     \
     2>&1 | tee ${MODEL_DIR}/train_en${lang}.log
 

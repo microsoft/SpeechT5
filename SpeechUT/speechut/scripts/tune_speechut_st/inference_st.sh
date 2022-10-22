@@ -1,7 +1,7 @@
 # ####################################
 # SpeechUT Base model #
 # ####################################
-[ $# -lt 3 ] && echo "Usage: $0 <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=5] [lenpen=1.0]" && exit 0
+[ $# -lt 3 ] && echo "Usage: $0 <model_path> <data_dir> <lang> [gen-set=dev] [beam_size=10] [lenpen=1.0]" && exit 0
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 model_path=$1
@@ -11,7 +11,7 @@ gen_set=$4
 beam_size=$5
 lenpen=$6
 [ -z $gen_set ] && gen_set="dev"
-[ -z $beam_size ] && beam_size=5
+[ -z $beam_size ] && beam_size=10
 [ -z $lenpen ] && lenpen=1
 src_dir=${model_path%/*}
 cpt=${model_path##*/}

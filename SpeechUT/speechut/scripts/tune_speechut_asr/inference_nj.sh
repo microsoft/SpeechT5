@@ -1,7 +1,7 @@
 #####################################
 # SpeechUT ASR model #
 #####################################
-[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=30] [ctc_weight=0.2] [nj=40] [ngpu=8]" && exit 1
+[ $# -lt 2 ] && echo "Usage: $0 <model_path> <data_dir> [gen-set=dev_other] [beam_size=10] [ctc_weight=0.2] [nj=40] [ngpu=8] [--normalize]" && exit 1
 [ ${PWD##*/} != SpeechUT ] && echo "Error: dir not match! Switch to SpeechUT/ and run it again!" && exit 1
 
 model_path=$1
@@ -11,11 +11,13 @@ beam_size=$4
 ctc_weight=$5
 nj=$6
 ngpu=$7
+extra=$8
+[ -z $extra ] && echo "Assert decoding base model! If you are decoding large model, please add '--normalize' at the end..."
 [ -z $gen_set ] && gen_set="dev_other"
 [ -z $beam_size ] && beam_size=10
 [ -z $ctc_weight ] && ctc_weight=0.2
 [ $ctc_weight == 0 ] && [ $beam_size != 1 ] && echo "Change beam size to 1 as no ctc-decoding used..." && beam_size=1
-[ $ctc_weight != 0 ] && extra="--batch-size 1"
+[ $ctc_weight != 0 ] && extra="$extra --batch-size 1"
 [ -z $nj ] && nj=32
 [ -z $ngpu ] && ngpu=8
 
