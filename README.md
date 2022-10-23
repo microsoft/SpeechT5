@@ -11,30 +11,30 @@
 
 > [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```Arxiv 2022```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
 
-Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is here [https://github.com/microsoft/SpeechT5/tree/main/ModelName].
+Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [\https://github.com/microsoft/SpeechT5/tree/main/ModelName].
 
 
 # Update
 
-- [Model Release] October, 2022: SpeechUT models are released.
-- October, 2022: SpeechUT was accepted by EMNLP 2022.
-- [Model Release] October, 2022: SpeechLM models are released.
-- September, 2022: SpeechLM Arxiv.
-- [Evaluation] June, 2022: The end-to-end ST system YiTrans achieved top results on IWSLT 2022 shared tasks.
-- June, 2022: Speech2C was accepted by InterSpeech 2022.
-- [Model Release] May, 2022: Speech2C models are released.
-- [Model Release] April, 2022: SpeechT5 models are released.
-- March, 2022: Speech2C Arxiv
-- February, 2022: SpeechT5 was accepted by ACL 2022.
-- October, 2021: SpeechT5 Arxiv
+- [Model Release] October, 2022: [**SpeechUT**](https://github.com/microsoft/SpeechT5/tree/main/SpeechUT) models are released.
+- October, 2022: [**SpeechUT**](https://arxiv.org/abs/2210.03730). was accepted by EMNLP 2022.
+- [Model Release] October, 2022: [**SpeechLM**](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM) models are released.
+- September, 2022: SpeechLM [**Arxiv**](https://arxiv.org/abs/2209.15329).
+- [Evaluation] June, 2022: The end-to-end ST system [**YiTrans**](https://arxiv.org/abs/2206.05777) achieved top results on [**IWSLT 2022**](https://iwslt.org/2022/offline) shared tasks.
+- June, 2022:  [**Speech2C**](https://www.isca-speech.org/archive/interspeech_2022/ao22_interspeech.html) was accepted by InterSpeech 2022.
+- [Model Release] May, 2022: [**Speech2C**](https://github.com/microsoft/SpeechT5/tree/main/Speech2C) models are released.
+- [Model Release] April, 2022: [**SpeechT5**](https://github.com/microsoft/SpeechT5/tree/main/SpeechT5) models are released.
+- March, 2022: Speech2C [**Arxiv**](https://arxiv.org/abs/2203.17113)
+- February, 2022: [**SpeechT5**](https://aclanthology.org/2022.acl-long.393/) was accepted by ACL 2022.
+- October, 2021: SpeechT5 [**Arxiv**](https://arxiv.org/abs/2110.07205)
 
 
 # Pre-Trained Models
-<!--| :------: | :----------------------------------------------: | :-----------------: | :-----: |
-| :------:          | --> 
+
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
-| :------:              | :----------------------------------------------:                                                                                                  | :-----------------:                               | :-----: |
+| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+| :------:          
 | SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/file/d/1Sq00uZ1pw6Z4OUaqhOWzQEJxIVWgAO5U/view?usp=sharing)  |
 | SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/file/d/1qLKJ81JPWOGf1MHfjSmgtZyqqTqgI6kT/view?usp=sharing)  |
 | SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [Google Drive](https://drive.google.com/file/d/1M79b1jetSPOVxWVMIX-y0URvDjNskZKp/view?usp=sharing)  |
