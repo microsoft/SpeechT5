@@ -9,6 +9,21 @@ Official PyTorch implementation and pretrained models of SpeechT5
 - Oct 2021: release preprint in [arXiv](https://arxiv.org/abs/2110.07205)
 - Feb 2022: accepted by [ACL 2022](https://www.2022.aclweb.org/)
 
+
+## Pre-Trained Models
+
+|  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
+| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/file/d/1Sq00uZ1pw6Z4OUaqhOWzQEJxIVWgAO5U/view?usp=sharing)  |
+| SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/file/d/1qLKJ81JPWOGf1MHfjSmgtZyqqTqgI6kT/view?usp=sharing)  |
+| SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [Google Drive](https://drive.google.com/file/d/1M79b1jetSPOVxWVMIX-y0URvDjNskZKp/view?usp=sharing)  |
+
+## Language Model and Vocabulary
+|  Model   |  Dataset | Model | Vocabulary | SPM Model |
+| :------: | :------: | :---: | :--------: | :-------: |
+| LM | [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [LM Model](https://drive.google.com/uc?export=download&id=1y0TGnKAMKUW5C8l8yrvGjh9RRZETPdv7)  | [Vocabulary](https://drive.google.com/uc?export=download&id=19hcQ58RHZ6CssxF8Qp6yEF1NW_AXxObK) | [SPM Model](https://drive.google.com/uc?export=download&id=1wClgQjXXoU2lmpbaEa1v2SqMbg7cAutq) |
+
+
 ## Setup
 ```
 git submodule update --init SpeechT5/fairseq
@@ -17,18 +32,7 @@ pip install --editable fairseq/
 pip install espnet
 ```
 
-## Data Preparation
 
-### Speech data and S2T Data
-Please follow the steps for preparing wav2vec 2.0 manifest in [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) and preparing HuBERT label in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
-
-We add a third column for the speaker embedding, which is provided in [here](https://drive.google.com/uc?export=download&id=16QOUURZBrW7-GYbVG_gXt3mTMlZmQoH0).
-It includes the speaker embeddings for 960hr training data and dev-other data of LibriSpeech.
-
-We also provide example manifests for your reference in [here](https://drive.google.com/drive/folders/1Ja08XjOHe6vP8lZtLVrJM8173aPQCR_y?usp=sharing).
-
-### Text Data
-Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data. Note that we use sentencepiece to pre-process the text, so please refer to [here](https://github.com/microsoft/SpeechT5#language-model-and-vocabulary) to download the SPM model and dictionary for preparing text data. This means you firstly need to use the SPM model to process the text and then use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) with the provided dictionary to get the index and bin files.
 
 ## Load Pre-Trained Models
 
@@ -47,6 +51,19 @@ task = SpeechT5Task.setup_task(checkpoint['cfg']['task'])
 model = T5TransformerModel.build_model(checkpoint['cfg']['model'], task)
 model.load_state_dict(checkpoint['model'])
 ```
+
+## Data Preparation
+
+### Speech data and S2T Data
+Please follow the steps for preparing wav2vec 2.0 manifest in [here](https://github.com/pytorch/fairseq/tree/main/examples/wav2vec#prepare-training-data-manifest) and preparing HuBERT label in [here](https://github.com/facebookresearch/fairseq/tree/main/examples/hubert/simple_kmeans).
+
+We add a third column for the speaker embedding, which is provided in [here](https://drive.google.com/uc?export=download&id=16QOUURZBrW7-GYbVG_gXt3mTMlZmQoH0).
+It includes the speaker embeddings for 960hr training data and dev-other data of LibriSpeech.
+
+We also provide example manifests for your reference in [here](https://drive.google.com/drive/folders/1Ja08XjOHe6vP8lZtLVrJM8173aPQCR_y?usp=sharing).
+
+### Text Data
+Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data. Note that we use sentencepiece to pre-process the text, so please refer to [here](https://github.com/microsoft/SpeechT5#language-model-and-vocabulary) to download the SPM model and dictionary for preparing text data. This means you firstly need to use the SPM model to process the text and then use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) with the provided dictionary to get the index and bin files.
 
 ## Pre-Training
 
