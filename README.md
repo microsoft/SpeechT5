@@ -1,6 +1,6 @@
 # SpeechT5
 
-Unified-Modal Speech-Text Pre-Training for Spoken Language Processing
+Unified-modal speech-text pre-training for spoken language processing:
 
 > [**SpeechT5**](https://arxiv.org/abs/2110.07205) (```ACL 2022```): **SpeechT5: Unified-Modal Encoder-Decoder Pre-training for Spoken Language Processing**
 
@@ -12,7 +12,7 @@ Unified-Modal Speech-Text Pre-Training for Spoken Language Processing
 
 > [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```Arxiv 2022```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
 
-Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [\https://github.com/microsoft/SpeechT5/tree/main/ModelName].
+Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName].
 
 
 # Update
