@@ -31,7 +31,7 @@ Model introductions, evaluation results, and model inference instructions are lo
 
 # Pre-Trained Models
 <!--| :------: | :----------------------------------------------: | :-----------------: | :-----: |
-| :------: -->              | 
+| :------:          | --> 
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
 :----------------------------------------------:                                                                                                  | :-----------------:                               | :-----: |
