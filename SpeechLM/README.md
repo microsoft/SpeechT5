@@ -156,6 +156,9 @@ Put yout prepared data into `$data_dir`, we provided eamples in [`dataset/LibriS
     bash speechlm/scripts/tune_speechlm_st/inference_large.sh $model_path $data_dir $lang dev
     ```
 
+## Universal Representation Evaluation on SUPERB
+
+Please refer to [**SUPERB**](https://superbbenchmark.org/) for the downstreaming tasks.
 
 ## Pre-train
 Please follow the instructions of [Tokenizer](README.md#Tokenizers) to prepare the pre-training data. We provided examples in [`dataset`](dataset).
