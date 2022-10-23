@@ -30,9 +30,11 @@ Model introductions, evaluation results, and model inference instructions are lo
 
 
 # Pre-Trained Models
+<!--| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+| :------: -->              | 
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
-| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+:----------------------------------------------:                                                                                                  | :-----------------:                               | :-----: |
 | SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base.pt)<br /> [Google Drive](https://drive.google.com/file/d/1Sq00uZ1pw6Z4OUaqhOWzQEJxIVWgAO5U/view?usp=sharing)  |
 | SpeechT5 Base | [960 hrs LibriSpeech](http://www.openslr.org/12) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) | [100 hrs LibriSpeech](http://www.openslr.org/12) | [HuggingFace](https://huggingface.co/ajyy/SpeechT5/resolve/main/speecht5_base_asr.pt)<br /> [Google Drive](https://drive.google.com/file/d/1qLKJ81JPWOGf1MHfjSmgtZyqqTqgI6kT/view?usp=sharing)  |
 | SpeechT5 Large | [60k hrs Libri-Light](https://github.com/facebookresearch/libri-light) + [LibriSpeech LM Dataset](https://www.openslr.org/11/) |          -          | [Google Drive](https://drive.google.com/file/d/1M79b1jetSPOVxWVMIX-y0URvDjNskZKp/view?usp=sharing)  |
