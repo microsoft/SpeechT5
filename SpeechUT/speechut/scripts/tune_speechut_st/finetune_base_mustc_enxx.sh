@@ -61,7 +61,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/train.py ${DATA_DIR} \
     --arch "speechut_st_legacy" \
     --w2v-path ${w2v_path} \
     --layerdrop 0.1 \
-    --activation-dropout 0.0 \
+    --activation-dropout 0.1 \
     --attention-dropout 0.1 \
     --feature-grad-mult 1.0 \
     \

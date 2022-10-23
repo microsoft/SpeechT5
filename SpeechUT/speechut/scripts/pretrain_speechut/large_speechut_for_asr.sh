@@ -10,7 +10,7 @@ world_size=$4
 update_freq=$5
 [ -z $mount ] && mount=${PWD}
 [ -z $world_size ] && world_size=32
-[ -z $update_freq ] && update_freq=1
+[ -z $update_freq ] && update_freq=4
 
 CODE_ROOT=${PWD}
 MODEL_DIR="${mount}/exp/pretrain/large_speechut4asr_${world_size}gpu_${update_freq}accum"
