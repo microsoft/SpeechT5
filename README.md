@@ -12,11 +12,14 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```Arxiv 2022```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
 
+> [**Speech2S**](https://arxiv.org/abs/2210.17027) (```Arxiv 2022```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
+
 Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName].
 
 
-# Update
+## Update
 
+- November, 2022: Speech2S [**Arxiv**](https://arxiv.org/abs/2210.17027).
 - [Model Release] October, 2022: [**SpeechUT**](https://github.com/microsoft/SpeechT5/tree/main/SpeechUT) models are released.
 - October, 2022: [**SpeechUT**](https://arxiv.org/abs/2210.03730) was accepted by EMNLP 2022.
 - [Model Release] October, 2022: [**SpeechLM**](https://github.com/microsoft/SpeechT5/tree/main/SpeechLM) models are released.
@@ -30,7 +33,7 @@ Model introductions, evaluation results, and model inference instructions are lo
 - October, 2021: SpeechT5 [**Arxiv**](https://arxiv.org/abs/2110.07205).
 
 
-# Pre-Trained Models
+## Pre-Trained Models
 
 
 |  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
@@ -68,7 +71,7 @@ Model introductions, evaluation results, and model inference instructions are lo
 
 
 
-# SpeechT5 Introduction
+## SpeechT5 Introduction
 
 Motivated by the success of T5 (Text-To-Text Transfer Transformer) in pre-trained natural language processing models, we propose a unified-modal SpeechT5 framework that explores the encoder-decoder pre-training for self-supervised speech/text representation learning.
 The SpeechT5 framework consists of a shared encoder-decoder network and six modal-specific (speech/text) pre/post-nets. 
