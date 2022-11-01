@@ -194,11 +194,16 @@ This tokenizer is used to produce the frame-laigned phonemes for unlabeled speec
 In the Base setting, we use 100h LibriSpeech labeled data to train the HMM model under Kaldi recipe, then decode the unpaired speech and get the aligned phonemes from the lattice.
 Here we provided the processed phonemes of 960h speech here: [`train_960.tsv`](https://drive.google.com/file/d/1rxlikMglL2kEsF4NfqekZRoA02klY7CE/view?usp=sharing), [`train_960.phn`](https://drive.google.com/file/d/1pOzdB1qtofdgMohPnSUuOJVTPVFy2oRh/view?usp=sharing), [`dev_clean.tsv`](https://drive.google.com/file/d/1NuVwe687jLBFkDLRy1EV2A2uXyV_kBo2/view?usp=sharing), [`dev_clean.phn`](https://drive.google.com/file/d/1cq_gbS-UgCALOoaE5QmhWrhkTdXuc_Uc/view?usp=sharing). Note that the label-rate is 100 (10ms).
 
+> The phoneme inventory is 300+ word-position-dependent phones including silence phones.
+
 ### Phoneme-unit Tokenizer for Text
 This tokenizer is used to phonemize the unpaired text data to (phonemes, letters) paired data, following a `words -> phonemes -> upsampled phones` pipeline.
 
 The following script will download LibriSpeech LM corpus and produce the required data: `train_text.phn-ltr.phn.{idx,bin}` and `train_text.phn-ltr.ltr.{idx,bin}`. 
 > Before runing it, make sure you have our provided [`dcit.phn.txt`](dataset/LibriLM/phone_unit/bin-idx/dcit.phn.txt) and [`dcit.ltr.txt`](dataset/LibriLM/phone_unit/bin-idx/dcit.ltr.txt) in the output dir `dataset/LibriLM/phone_unit/bin-idx/`.
+
+> The phoneme inventory is 300+ word-position-dependent phones including silence phones.
+
 ```bash
 # data will be in dataset/LibriLM/phone_unit/
 bash speechlm/data_process/prepare_phn2ltr_librilm.sh
@@ -210,14 +215,20 @@ Please follow the steps of data preparation for HuBERT [here](https://github.com
 This tokenizer is used to produce the speech-style hidden units from unpaired text.
 We train a [FastSpeech](https://arxiv.org/abs/2006.04558)-like model (instead generating continuous spectrum in the original paper, here we generate discrete units) on a small amount of ASR data ([100 hrs LibriSpeech](http://www.openslr.org/12)) as the tokenizer.
 
-1. Convert asr transcripts to phoneme sequence.
+Train:
+1. Convert asr transcripts to phoneme sequence with duration information.
 2. Extract hidden-units from speech, using the [Hidden-unit Tokenizer for Speech](#hidden-unit-tokenizer-for-speech).
 3. Train the [model](speechlm/models/fasttext2unit.py) on the paired data:
     ```bash
     data_dir=dataset/LibriSpeech/fast_phone2unit
     bash speechlm/scripts/tokenizer_fastT2U/train_s_5e-4.sh $data_dir
     ```
-4. [Generate](speechlm/scripts/tokenizer_fastT2U/generate.sh) hidden units for a large text corpus:
+> The phoneme inventory is 41 mono phones including silence phones.
+
+Inference:
+
+4. Convert text data to phoneme sequence by [`lexicon`](https://drive.google.com/file/d/1dh9NEx_cCF9_Aa0UcKyl9j00GXs6LmLQ/view?usp=sharing).
+5. [Generate](speechlm/scripts/tokenizer_fastT2U/generate.sh) hidden units for a large text corpus:
     ```bash
     gen_set=dataset/LibriSpeech/fast_phone2unit/genset_examples
     bash speechlm/scripts/tokenizer_fastT2U/generate.sh $model_path $gen_set
