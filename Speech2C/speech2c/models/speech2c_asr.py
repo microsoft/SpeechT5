@@ -158,7 +158,7 @@ class Speech2cEncoder(FairseqEncoder):
 
         super().__init__(task.source_dictionary)
 
-        d = w2v_args.model.encoder_embed_dim
+        d = model.mask_emb.size(0)
 
         self.w2v_model = model
 
