@@ -81,6 +81,7 @@ model:
   untie_final_proj: true
   activation_dropout: 0.0
   use_rel_pos_enc: true
+  decoder_dict_size: -1
 
 hydra:
   job:
