@@ -63,7 +63,7 @@ It includes the speaker embeddings for 960hr training data and dev-other data of
 We also provide example manifests for your reference in [here](https://drive.google.com/drive/folders/1Ja08XjOHe6vP8lZtLVrJM8173aPQCR_y?usp=sharing).
 
 ### Text Data
-Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data. Note that we use sentencepiece to pre-process the text, so please refer to [here](https://github.com/microsoft/SpeechT5#language-model-and-vocabulary) to download the SPM model and dictionary for preparing text data. This means you firstly need to use the SPM model to process the text and then use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) with the provided dictionary to get the index and bin files.
+Please use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) to generate the index and bin files of the text data. Note that we use sentencepiece to pre-process the text, so please refer to [here](https://github.com/microsoft/SpeechT5/tree/main/SpeechT5#language-model-and-vocabulary) to download the SPM model and dictionary for preparing text data. This means you firstly need to use the SPM model to process the text and then use [fairseq-preprocess](https://fairseq.readthedocs.io/en/latest/command_line_tools.html#fairseq-preprocess) with the provided dictionary to get the index and bin files.
 
 ## Pre-Training
 
