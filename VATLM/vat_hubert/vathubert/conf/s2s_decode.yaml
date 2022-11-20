@@ -1,0 +1,23 @@
+common:
+  user_dir: ???
+
+generation:
+  beam: 50
+  max_len_a: 1.0
+  max_len_b: 0
+  lenpen: 1.0
+  lm_weight: 0
+
+common_eval:
+  results_path: ???
+  path: ???
+
+dataset:
+  max_tokens: 1000
+  gen_subset: valid
+  num_workers: 0
+
+override:
+  noise_prob: 0.0
+  noise_snr: 0
+  modalities: ???

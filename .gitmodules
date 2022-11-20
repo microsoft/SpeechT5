@@ -13,3 +13,6 @@
 [submodule "SpeechUT/fairseq"]
 	path = SpeechUT/fairseq
 	url = https://github.com/facebookresearch/fairseq.git
+[submodule "VATLM/fairseq"]
+	path = VATLM/fairseq
+	url = https://github.com/facebookresearch/fairseq.git
