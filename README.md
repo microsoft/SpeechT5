@@ -14,11 +14,15 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**Speech2S**](https://arxiv.org/abs/2210.17027) (```Arxiv 2022```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
 
+> [**VATLM**](https://arxiv.org/abs/2211.11275) (```Arxiv 2022```): **VATLM: Visual-Audio-Text Pre-Training with Unified Masked Prediction for Speech Representation Learning**
+
 Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName].
 
 
 ## Update
 
+- [Model Release] November, 2022: [**VATLM**](https://github.com/microsoft/SpeechT5/tree/main/VATLM) models are released.
+- November, 2022: VATLM [**Arxiv**](https://arxiv.org/abs/2211.11275).
 - November, 2022: Speech2S [**Arxiv**](https://arxiv.org/abs/2210.17027).
 - [Model Release] October, 2022: [**SpeechUT**](https://github.com/microsoft/SpeechT5/tree/main/SpeechUT) models are released.
 - October, 2022: [**SpeechUT**](https://arxiv.org/abs/2210.03730) was accepted by EMNLP 2022.
