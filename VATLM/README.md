@@ -5,7 +5,7 @@
 
 
 - (Updating) Nov. 2022: release the code and models
-- Nov. 2022: release preprint in [arXiv](https://arxiv.org/abs/2209.15329)
+- Nov. 2022: release preprint in [arXiv](https://arxiv.org/abs/2211.11275)
 
 ## Pre-Trained and Fine-tuned Models
 
@@ -118,13 +118,12 @@ Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorc
 If you find our work is useful in your research, please cite the following paper:
 
 ```bibtex
-@article{zhang2022speechlm,
-  title   = {SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data},
-  author  = {Zhang, Ziqiang and Chen, Sanyuan and Zhou, Long and Wu, Yu and Ren, Shuo and Liu, Shujie and Yao, Zhuoyuan and Gong, Xun and Dai, Lirong and Li, Jinyu and Wei, Furu},
-  eprint={2209.15329},
-  archivePrefix={arXiv},
-  primaryClass={cs.CL},
-  year={2022}
+@article{zhu2022vatlm,
+      title={VATLM: Visual-Audio-Text Pre-Training with Unified Masked Prediction for Speech Representation Learning}, 
+      author={Qiushi Zhu and Long Zhou and Ziqiang Zhang and Shujie Liu and Binxing Jiao and Jie Zhang and Lirong Dai and Daxin Jiang and Jinyu Li and Furu Wei},
+      year={2022},
+      eprint={2211.11275},
+      archivePrefix={arXiv},
 }
 ```
 
