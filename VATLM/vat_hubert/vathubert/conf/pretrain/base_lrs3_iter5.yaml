@@ -1,0 +1,113 @@
+# @package _group_
+
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  seed: 1337
+  user_dir: ???
+  empty_cache_freq: 10000
+
+checkpoint:
+  save_interval: 5
+  save_interval_updates: 25000
+  keep_interval_updates: 1
+  no_epoch_checkpoints: false
+
+
+distributed_training:
+  ddp_backend: no_c10d
+  distributed_backend: 'nccl'
+  distributed_world_size: 32
+  # distributed_port: 29671
+  nprocs_per_node: 8
+
+task:
+  _name: vat_hubert_pretraining
+  data: ???
+  label_dir: ???
+  labels: ["km"]
+  label_rate: ${model.label_rate}
+  sample_rate: 25
+  max_sample_size: 500
+  min_sample_size: 5
+  pad_audio: true
+  random_crop: false
+  normalize: true
+  stack_order_audio: 4
+  # stack_order: 1
+  input_modality: image
+  image_aug: true
+
+dataset:
+  num_workers: 6
+  max_tokens: 1000
+  skip_invalid_size_inputs_valid_test: true
+  validate_interval: 5
+  validate_interval_updates: 10000
+
+criterion:
+  _name: vat_hubert
+  pred_masked_weight: 1.0
+  pred_nomask_weight: 0.0
+  loss_weights: [10,]
+
+optimization:
+  max_update: 400000
+  lr: [0.0005]
+  clip_norm: 10.0
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-06
+  weight_decay: 0.01
+
+lr_scheduler:
+  _name: polynomial_decay
+  warmup_updates: 32000
+
+model:
+  _name: vat_hubert
+  label_rate: ???
+  skip_masked: false
+  skip_nomask: false
+  modality_dropout: 0.5
+  audio_dropout: 0.5
+  modality_fuse: concat
+  selection_type: same_seq
+  masking_type: input
+  mask_prob_image: 0.3
+  mask_length_image: 10
+  mask_prob_audio: 0.8
+  mask_length_audio: 10
+  extractor_mode: default
+  # conv_feature_layers: '[(512,10,5)] + [(512,3,2)] * 4 + [(512,2,2)] * 2'
+  final_dim: 256
+  encoder_layerdrop: 0.05
+  dropout_input: 0.1
+  dropout_features: 0.1
+  dropout: 0.1
+  attention_dropout: 0.1
+  feature_grad_mult: 0.1
+  untie_final_proj: true
+  activation_dropout: 0.0
+  wav_input: false
+  layer_norm_first: true
+  audio_feat_dim: 104
+
+hydra:
+  job:
+    config:
+      override_dirname:
+        kv_sep: '-'
+        item_sep: '__'
+        exclude_keys:
+          - run
+          - task.data
+          - task.label_dir
+  run:
+    dir: ???
+  sweep:
+    dir: ???
+    subdir: ${hydra.job.config_name}__${hydra.job.override_dirname}
