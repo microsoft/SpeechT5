@@ -1,0 +1,17 @@
+cffi
+cython
+hydra-core<1.1,>=1.0.7
+omegaconf<2.1
+regex
+sacrebleu>=1.4.12
+torch
+tqdm
+bitarray
+torchaudio>=0.8.0
+
+[:python_version < "3.7"]
+dataclasses
+numpy<1.20.0
+
+[:python_version >= "3.7"]
+numpy
