@@ -1,4 +1,0 @@
-audio_root: ./
-standardize_audio: true
-use_audio_input: true
-vocab_filename: dict.txt
