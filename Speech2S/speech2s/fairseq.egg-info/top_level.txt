@@ -1,0 +1,2 @@
+fairseq
+fairseq_cli
