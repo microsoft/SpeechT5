@@ -54,3 +54,11 @@ Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorc
 ## Reference
 
 If you find our work is useful in your research, please cite the following paper: 
+```bibtex
+@article{wei2022joint,
+  title={Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation},
+  author={Wei, Kun and Zhou, Long and Zhang, Ziqiang and Chen, Liping and Liu, Shujie and He, Lei and Li, Jinyu and Wei, Furu},
+  journal={arXiv preprint arXiv:2210.17027},
+  year={2022}
+}
+```
