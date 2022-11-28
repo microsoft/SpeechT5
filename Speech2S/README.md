@@ -9,7 +9,7 @@
 
 ## Setup
 ```
-cd Speech2S/
+cd Speech2S/speech2s
 pip install --editable fairseq/
 ```
 
@@ -17,12 +17,15 @@ pip install --editable fairseq/
 Please follow the steps of data preparation for S2ST in [here](https://github.com/facebookresearch/fairseq/blob/main/examples/speech_to_speech/docs/enhanced_direct_s2st_discrete_units.md).
 
 ## Pre-Training
-
+cd stpretrain_scripts
+base_sc2c_enes.sh
 ## Finetune
-
+cd stpretrain_scripts
+finetune_enes.sh
 ## Inference
-
-## Results on Librispeech
+cd stpretrain_scripts
+inference_ed.sh
+## Results on Voxpopuli and Covst
 
 
 ## License
@@ -34,4 +37,4 @@ Portions of the source code are based on the [FAIRSEQ](https://github.com/pytorc
 
 ## Reference
 
-If you find our work is useful in your research, please cite the following paper:
+If you find our work is useful in your research, please cite the following paper: 
