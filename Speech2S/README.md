@@ -7,6 +7,16 @@
 - (Updating) Nov. 2022: release the code and models
 - Nov. 2022: release preprint in [arXiv](https://arxiv.org/abs/2210.17027)
 
+## Pre-Trained and Fine-tuned Models
+
+|  Model   |               Pre-training Dataset               | Fine-tuning Dataset | Model |
+| :------: | :----------------------------------------------: | :-----------------: | :-----: |
+| Speech2S_enes |   Voxpopuli_en_v2          -          | [Google Drive](https://drive.google.com/file/d/1TYypFiEKoCixUro8FTTG23bRZYwAxhkX/view?usp=share_link)  |
+| Speech2S_enes |   Voxpopuli_en_v2 | Voxpopuli_s2s |  [Google Drive](https://drive.google.com/file/d/11RxeKznSrHcoP_KK9A1VgwRt3fNh_U_C/view?usp=share_link) |
+| Speech2S_esen |   Voxpopuli_es_v2          -          | [Google Drive](https://drive.google.com/file/d/1NoC7W-UtQZ-ugIptF1ex0ZlGJncsT1S4/view?usp=share_link) |
+| Speech2S_esen |   Voxpopuli_es_v2 | Voxpopuli_s2s |  [Google Drive](https://drive.google.com/file/d/1eNcKw4ZWGmcABWXJxlf6MKocmiPrKSkH/view?usp=share_link) |
+
+
 ## Setup
 ```
 cd Speech2S/speech2s
