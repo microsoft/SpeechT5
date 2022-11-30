@@ -36,7 +36,7 @@ pip install espnet
 
 ## Load Pre-Trained Models
 
-```
+```python
 import torch
 from speecht5.tasks.speecht5 import SpeechT5Task
 from speecht5.models.speecht5 import T5TransformerModel
