@@ -213,7 +213,7 @@ class TranslationFromPretrainedTask(TranslationTask):
                 eos=self.tgt_dict.index("[{}]".format(self.args.target_lang)),
             )
         else:
-            from fairseq.sequence_generator import SequenceGenerator
+            from yitrans_iwslt22.sequence_generator import SequenceGenerator
 
             return SequenceGenerator(
                 models,
