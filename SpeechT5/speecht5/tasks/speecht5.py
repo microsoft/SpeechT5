@@ -28,6 +28,7 @@ from speecht5.data.multitask_dataset import MultitaskDataset
 from speecht5.data.speech_to_text_dataset import SpeechToTextDataset
 from speecht5.data.text_to_speech_dataset import TextToSpeechDataset
 from speecht5.data.speech_to_speech_dataset import SpeechToSpeechDataset
+from speecht5.data.speech_to_class_dataset import SpeechToClassDataset
 from speecht5.data.speech_dataset import SpeechPretrainDataset
 from speecht5.data.text_dataset import TextPretrainDataset
 from fairseq.data.shorten_dataset import maybe_shorten_dataset
@@ -274,7 +275,7 @@ class SpeechT5Task(LegacyFairseqTask):
         self.config = config
         self.t5_task = args.t5_task
         # Used for filter size
-        if self.t5_task in ['s2t', 't2s', 's2s']:
+        if self.t5_task in ['s2t', 't2s', 's2s', 's2c']:
             self.max_pos = [self.args.max_speech_positions * 256]
         elif self.t5_task == 'pretrain':
             self.max_pos = [self.args.max_speech_positions * 256, self.args.max_text_positions]
@@ -370,6 +371,27 @@ class SpeechT5Task(LegacyFairseqTask):
                 min_keep_sample_size=self.args.min_speech_sample_size,
                 normalize=self.args.normalize,
                 reduction_factor=self.args.reduction_factor,
+            )
+        elif self.t5_task == "s2c":
+            is_train_split = ("train" in split)
+            is_valid_split = ("valid" in split)
+            if is_train_split:
+                max_length = 51200
+            elif is_valid_split:
+                max_length = 76800
+            else:
+                max_length = 2560000
+            manifest = op.join(f"{self.args.data}", f"{split}.tsv")
+            procs = LabelEncoder(self.dicts["text"]) # map speaker to id
+            self.datasets[split] = SpeechToClassDataset(
+                manifest_path=manifest,
+                sample_rate=self.args.sample_rate,
+                label_processors=procs,
+                max_keep_sample_size=self.max_pos[0] if self.args.max_speech_sample_size is None else self.args.max_speech_sample_size,
+                min_keep_sample_size=self.args.min_speech_sample_size,
+                normalize=self.args.normalize,
+                tgt_dict=self.dicts["text"],
+                max_length=max_length
             )
         elif self.t5_task == "pretrain":
             is_train_split = ("train" in split)
@@ -605,6 +627,15 @@ class SpeechT5Task(LegacyFairseqTask):
         else:
             logger.info(f"tokenizer: {self.args.bpe_tokenizer}")
             return encoders.build_bpe(Namespace(**{"bpe": "sentencepiece", "sentencepiece_model": self.args.bpe_tokenizer}))
+
+    def generate_class(self, models, net_input, prefix_tokens, **kwargs):
+        with torch.no_grad():
+            encoder_input = {
+                k: v for k, v in net_input.items() if k != "prev_output_tokens" and k != "task_name"
+            }
+            encoder_input.update(kwargs)
+            encoder_input.update({"prev_output_tokens": prefix_tokens})
+            return models[0].generate_class(**encoder_input)
 
     def generate_speech(self, models, net_input, **kwargs):
         with torch.no_grad():

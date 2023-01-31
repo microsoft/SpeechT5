@@ -1168,6 +1168,23 @@ class T5TransformerModel(FairseqEncoderDecoderModel):
         super().set_num_updates(num_updates)
         self.num_updates = num_updates
 
+    def generate_class(self, source, prev_output_tokens, **kwargs):
+        encoder_out = self.forward_encoder(source, padding_mask=kwargs["padding_mask"])
+
+        prev_output_tokens, tgt_mask, _ = self.text_decoder_prenet(prev_output_tokens, {})
+        prev_output_tokens = torch.zeros_like(prev_output_tokens) # s2c use zero vector as [CLS]
+
+        decoder_output, extra = self.decoder(
+            prev_output_tokens,
+            tgt_mask,
+            encoder_out=encoder_out,
+        )
+
+        decoder_out, embed = self.speaker_decoder_postnet(decoder_output.mean(1))
+
+        pred_class = decoder_out.argmax(1)
+        return pred_class
+
     def generate_speech(self, source=None, src_tokens=None, spkembs=None, **kwargs):
         assert source is not None or src_tokens is not None
 
