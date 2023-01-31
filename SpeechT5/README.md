@@ -565,6 +565,112 @@ python3 ${SPEECHT5_CODE_DIR}/SpeechT5/scripts/generate_speech.py ${DATA_ROOT} \
         --sample-rate 16000
 ```
 
+### SID
+
+The manifest can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-sid), which may be helpful to reproduce the results of SpeechT5 SID model.
+
+We also provide re-implementation of SID fine-tuned model [speecht5_vc.pt](https://huggingface.co/mechanicalsea/speecht5-sid/tree/main/speecht5_sid.pt) with training log and results, **but in a smaller batch size**, which can be helpful.
+
+#### Training
+
+
+```
+DATA_ROOT=
+SAVE_DIR=
+TRAIN_SET=
+VALID_SET=
+USER_DIR=
+PT_CHECKPOINT_PATH=
+
+mkdir -p ${SAVE_DIR}
+
+fairseq-train ${DATA_ROOT} \
+  --save-dir ${SAVE_DIR} \
+  --tensorboard-logdir ${SAVE_DIR} \
+  --train-subset ${TRAIN_SET} \
+  --valid-subset ${VALID_SET} \
+  --user-dir ${USER_DIR} \
+  --distributed-world-size 8 \
+  --distributed-port 0 \
+  --ddp-backend legacy_ddp \
+  --log-format json \
+  --seed 1 \
+  --fp16 \
+  \
+  --task speecht5 \
+  --t5-task s2c \
+  --sample-rate 16000 \
+  --num-workers 4 \
+  --batch-size 8 \
+  --update-freq 2 \
+  --data-buffer-size 0 \
+  \
+  --criterion speecht5 \
+  --report-accuracy \
+  --best-checkpoint-metric "s2c_accuracy" \
+  --maximize-best-checkpoint-metric \
+  \
+  --optimizer adam \
+  --dropout 0.1 \
+  --activation-dropout 0.1 \
+  --attention-dropout 0.1 \
+  --encoder-layerdrop 0.05 \
+  --lr-scheduler triangular \
+  --max-lr 2e-4 \
+  --lr-period-updates 60000 \
+  --lr-shrink 0.5 \
+  --lr 1e-8 \
+  --feature-grad-mult 1.0 \
+  --weight-decay 0.1 \
+  \
+  --max-update 60000 \
+  --max-text-positions 600 \
+  --max-speech-positions 8000 \
+  --required-batch-size-multiple 1 \
+  --skip-invalid-size-inputs-valid-test \
+  --save-interval-updates 10000 \
+  --validate-after-updates 20000 \
+  --no-epoch-checkpoints \
+  --log-interval 10 \
+  \
+  --arch t5_transformer_base_asr \
+  --share-input-output-embed \
+  --find-unused-parameters \
+  --bert-init \
+  --relative-position-embedding \
+  --mask-prob 0.0 \
+  --mask-channel-prob 0.0 \
+  --sid-no-pooling-bn \
+  --sid-no-embed-postnet \
+  \
+  --finetune-from-model ${PT_CHECKPOINT_PATH}
+```
+
+#### Inference
+
+
+```
+CHECKPOINT_PATH=
+DATA_ROOT=
+SUBSET=
+USER_DIR=
+RESULTS_PATH=
+
+mkdir -p ${RESULTS_PATH}
+
+python scripts/generate_class.py ${DATA_ROOT} \
+  --gen-subset ${SUBSET} \
+  --user-dir ${USER_DIR} \
+  --log-format json \
+  --task speecht5 \
+  --t5-task s2c \
+  --path ${CHECKPOINT_PATH} \
+  --results-path ${RESULTS_PATH} \
+  --batch-size 1 \
+  --max-speech-positions 8000 \
+  --sample-rate 16000
+```
+
 ## License
 
 This project is licensed under the license found in the LICENSE file in the root directory of this source tree.
