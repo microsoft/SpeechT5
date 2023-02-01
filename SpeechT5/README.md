@@ -569,7 +569,7 @@ python3 ${SPEECHT5_CODE_DIR}/SpeechT5/scripts/generate_speech.py ${DATA_ROOT} \
 
 The manifest can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-sid), which may be helpful to reproduce the results of SpeechT5 SID model.
 
-We also provide re-implementation of SID fine-tuned model [speecht5_vc.pt](https://huggingface.co/mechanicalsea/speecht5-sid/tree/main/speecht5_sid.pt) with training log and results, **but in a smaller batch size**, which can be helpful.
+We also provide re-implementation of SID fine-tuned model [speecht5_sid.pt](https://huggingface.co/mechanicalsea/speecht5-sid/blob/main/speecht5_sid.pt) with training log and results, **but in a smaller batch size**, which can be helpful.
 
 #### Training
 
