@@ -136,6 +136,8 @@ fairseq-train ${DATA_ROOT} \
 
 ### ASR
 
+The fine-tuned ASR model can be used directly using Hugging Face Transformers. The checkpoint is available at [hf.co/microsoft/speecht5_asr](https://huggingface.co/microsoft/speecht5_asr). An interactive demo is [available here](https://huggingface.co/spaces/Matthijs/speecht5-asr-demo).
+
 #### Training
 
 ```
@@ -248,6 +250,8 @@ fairseq-generate ${DATA_ROOT} \
 The manifest and pre-trained vocoder can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-tts), which may be helpful to reproduce the results of SpeechT5 TTS model.
 
 We also provide re-implementation of TTS fine-tuned model [speecht5_tts.pt](https://huggingface.co/mechanicalsea/speecht5-tts/blob/main/speecht5_tts.pt), but with a smaller batch size or max updates, which can be helpful.
+
+This fine-tuned TTS model can also be used directly using Hugging Face Transformers. The checkpoint is available at [hf.co/microsoft/speecht5_tts](https://huggingface.co/microsoft/speecht5_tts). An interactive demo is [available here](https://huggingface.co/spaces/Matthijs/speecht5-tts-demo).
 
 #### Training
 
@@ -464,6 +468,8 @@ fairseq-generate ${DATA_ROOT} \
 The manifest and pre-trained vocoder can be found in [huggingface](https://huggingface.co/mechanicalsea/speecht5-vc), which may be helpful to reproduce the results of SpeechT5 VC model.
 
 We also provide re-implementation of VC fine-tuned model [speecht5_vc.pt](https://huggingface.co/mechanicalsea/speecht5-vc/blob/main/speecht5_vc.pt), but with a smaller batch size or max updates, which can be helpful.
+
+This fine-tuned VC model can also be used directly using Hugging Face Transformers. The checkpoint is available at [hf.co/microsoft/speecht5_vc](https://huggingface.co/microsoft/speecht5_vc). An interactive demo is [available here](https://huggingface.co/spaces/Matthijs/speecht5-vc-demo).
 
 #### Training
 
