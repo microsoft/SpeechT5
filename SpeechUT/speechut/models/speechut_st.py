@@ -115,13 +115,10 @@ class SpeechUTEncoder(FairseqEncoder):
             "both pre-training and here"
         )
 
-        w2v_args.task.data = cfg.data
-        pretrain_task = tasks.setup_task(w2v_args.task)
-        if state is not None and "task_state" in state:
-            # This will load the stored "dictionaries" object
-            pretrain_task.load_state_dict(state["task_state"])
-        else:
-            pretrain_task.load_state_dict(task.state_dict())
+        pretrain_task = tasks.setup_task(w2v_args.task, load_local_states=False)
+        assert state is not None and "task_state" in state, f"the stored dictionaries not found in checkpoint!"
+        # This will load the stored "dictionaries" object
+        pretrain_task.load_state_dict(state["task_state"])
 
         model = pretrain_task.build_model(w2v_args.model, from_checkpoint=True)
         if state is not None and not cfg.no_pretrained_weights:

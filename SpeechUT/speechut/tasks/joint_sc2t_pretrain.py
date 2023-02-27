@@ -401,6 +401,7 @@ class Jsc2tPretrainingTask(FairseqTask):
     def __init__(
         self,
         cfg: JointPretrainingConfig,
+        load_local_states: True,
     ) -> None:
         super().__init__(cfg)
 
@@ -411,20 +412,21 @@ class Jsc2tPretrainingTask(FairseqTask):
         self.fine_tuning = cfg.fine_tuning
         self.blank_symbol = "<s>"
 
-        self.state.add_factory("hubert_tokenizer", self.build_tokenizer)
-        if self.cfg.text_cfg.text_data is not None and os.path.exists(self.cfg.text_cfg.text_data):
-            self.state.add_factory("text_dictionary", self.load_text_dictionary)
-            self.state.add_factory("text_src_dictionary", self.load_text_src_dictionary)
-        if cfg.fine_tuning:
-            self.state.add_factory("target_dictionary", self.load_dictionaries)
-        else:
-            self.state.add_factory("dictionaries", self.load_dictionaries)
+        if load_local_states:
+            self.state.add_factory("hubert_tokenizer", self.build_tokenizer)
+            if self.cfg.text_cfg.text_data is not None and os.path.exists(self.cfg.text_cfg.text_data):
+                self.state.add_factory("text_dictionary", self.load_text_dictionary)
+                self.state.add_factory("text_src_dictionary", self.load_text_src_dictionary)
+            if cfg.fine_tuning:
+                self.state.add_factory("target_dictionary", self.load_dictionaries)
+            else:
+                self.state.add_factory("dictionaries", self.load_dictionaries)
 
-        if cfg.text_cfg.data_config is not None:
-            self.text_data_cfg = S2TJointDataConfig(Path(f"{cfg.text_cfg.text_data}/{cfg.text_cfg.data_config}"))
-            self.cfg.text_cfg.bpe = self.text_data_cfg.bpe_tokenizer["bpe"]
-        else:
-            self.text_data_cfg = None
+            if cfg.text_cfg.data_config is not None:
+                self.text_data_cfg = S2TJointDataConfig(Path(f"{cfg.text_cfg.text_data}/{cfg.text_cfg.data_config}"))
+                self.cfg.text_cfg.bpe = self.text_data_cfg.bpe_tokenizer["bpe"]
+            else:
+                self.text_data_cfg = None
 
     @property
     def source_dictionary(self) -> Optional[Dictionary]:
@@ -478,7 +480,8 @@ class Jsc2tPretrainingTask(FairseqTask):
     def setup_task(
         cls, cfg: JointPretrainingConfig, **kwargs
     ) -> "Jsc2tPretrainingTask":
-        return cls(cfg)
+        load_local_states = kwargs.get("load_local_states", True)
+        return cls(cfg, load_local_states)
 
     def get_label_dir(self) -> str:
         if self.cfg.label_dir is None:

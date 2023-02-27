@@ -1,0 +1,3 @@
+vocab_filename: dict.spm.txt
+src_vocab_filename: dict.kmu.txt
+

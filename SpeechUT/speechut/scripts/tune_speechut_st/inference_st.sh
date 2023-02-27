@@ -37,6 +37,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
     --scoring sacrebleu --max-len-a 0 --max-len-b 512 \
     --beam ${beam_size} \
     --lenpen $lenpen \
+    # --model-overrides "{'model':{'w2v_path':'/path/to/your/pretrained/model.pt'}}" \
 
     echo $results_path
     tail -n 1 $results_path/generate-*.txt
