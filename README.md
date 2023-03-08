@@ -14,11 +14,11 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**Speech2S**](https://arxiv.org/abs/2210.17027) (```ICASSP 2023```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
 
-> [**Prosody-SpeechT5**]() (```ICASSP 2023```): **PROSODY-AWARE SPEECHT5 FOR EXPRESSIVE NEURAL TTS**
+> [**Prosody-SpeechT5**]() (```ICASSP 2023```): **Prosody-aware SpeechT5 for Expressive Neural TTS**
 
 > [**VATLM**](https://arxiv.org/abs/2211.11275) (```Arxiv 2022```): **VATLM: Visual-Audio-Text Pre-Training with Unified Masked Prediction for Speech Representation Learning**
 
-> [**VATLM**](https://arxiv.org/abs/2303.03926) (```Arxiv 2023```): **Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec Language Modeling**
+> [**VALL-E X**](https://arxiv.org/abs/2303.03926) (```Arxiv 2023```): **Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec Language Modeling**
 
 <!-- Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName]. -->
 
