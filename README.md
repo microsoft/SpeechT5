@@ -12,15 +12,22 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```Arxiv 2022```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
 
-> [**Speech2S**](https://arxiv.org/abs/2210.17027) (```Arxiv 2022```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
+> [**Speech2S**](https://arxiv.org/abs/2210.17027) (```ICASSP 2023```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
+
+> [**Prosody-SpeechT5**]() (```ICASSP 2023```): **PROSODY-AWARE SPEECHT5 FOR EXPRESSIVE NEURAL TTS**
 
 > [**VATLM**](https://arxiv.org/abs/2211.11275) (```Arxiv 2022```): **VATLM: Visual-Audio-Text Pre-Training with Unified Masked Prediction for Speech Representation Learning**
 
-Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName].
+> [**VATLM**](https://arxiv.org/abs/2303.03926) (```Arxiv 2023```): **Speak Foreign Languages with Your Own Voice: Cross-Lingual Neural Codec Language Modeling**
+
+<!-- Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName]. -->
 
 
 ## Update
 
+- March, 2023: VALL-E X [**Arxiv**](https://arxiv.org/abs/2303.03926) and [**Demo**](https://vallex-demo.github.io/).
+- February, 2023: [**Speech2S**](https://arxiv.org/abs/2210.17027) and Prosody-SpeechT5 was accepted by ICASSP 2023.
+- [HuggingFace Integration] February, 2023: [**SpeechT5**](https://aclanthology.org/2022.acl-long.393/) models are on [**HuggingFace**](https://huggingface.co/blog/speecht5).
 - [Model Release] November, 2022: [**VATLM**](https://github.com/microsoft/SpeechT5/tree/main/VATLM) models are released.
 - November, 2022: VATLM [**Arxiv**](https://arxiv.org/abs/2211.11275).
 - November, 2022: Speech2S [**Arxiv**](https://arxiv.org/abs/2210.17027).
