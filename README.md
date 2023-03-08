@@ -26,7 +26,7 @@ Unified-modal speech-text pre-training for spoken language processing:
 ## Update
 
 - March, 2023: VALL-E X [**Arxiv**](https://arxiv.org/abs/2303.03926) and [**Demo**](https://vallex-demo.github.io/).
-- February, 2023: [**Speech2S**](https://arxiv.org/abs/2210.17027) and Prosody-SpeechT5 was accepted by ICASSP 2023.
+- February, 2023: [**Speech2S**](https://arxiv.org/abs/2210.17027) and Prosody-SpeechT5 were accepted by ICASSP 2023.
 - [HuggingFace Integration] February, 2023: [**SpeechT5**](https://aclanthology.org/2022.acl-long.393/) models are on [**HuggingFace**](https://huggingface.co/blog/speecht5).
 - [Model Release] November, 2022: [**VATLM**](https://github.com/microsoft/SpeechT5/tree/main/VATLM) models are released.
 - November, 2022: VATLM [**Arxiv**](https://arxiv.org/abs/2211.11275).
