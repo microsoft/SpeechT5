@@ -16,3 +16,7 @@
 [submodule "VATLM/fairseq"]
 	path = VATLM/fairseq
 	url = https://github.com/facebookresearch/fairseq.git
+[submodule "Speech2S/fairseq"]
+	path = Speech2S/fairseq
+	url = https://github.com/facebookresearch/fairseq.git
+	branch = adding_womenbios
