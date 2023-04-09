@@ -28,17 +28,17 @@ Please follow the steps of data preparation for S2ST in [here](https://github.co
 
 ## Pre-Training
 ```
-cd stpretrain_scripts
+cd speech2s/stpretrain_scripts
 base_sc2c_enes.sh
 ```
 ## Finetune
 ```
-cd stpretrain_scripts
+cd speech2s/stpretrain_scripts
 finetune_enes.sh
 ```
 ## Inference
 ```
-cd stpretrain_scripts
+cd speech2s/stpretrain_scripts
 inference_ed.sh
 ```
 ## Results on Voxpopuli and Covst
