@@ -251,7 +251,7 @@ The manifest and pre-trained vocoder can be found in [huggingface](https://huggi
 
 We also provide re-implementation of TTS fine-tuned model [speecht5_tts.pt](https://huggingface.co/mechanicalsea/speecht5-tts/blob/main/speecht5_tts.pt), but with a smaller batch size or max updates, which can be helpful.
 
-This fine-tuned TTS model can also be used directly using Hugging Face Transformers. The checkpoint is available at [hf.co/microsoft/speecht5_tts](https://huggingface.co/microsoft/speecht5_tts). An interactive demo is [available here](https://huggingface.co/spaces/Matthijs/speecht5-tts-demo).
+This fine-tuned TTS model can also be used directly using Hugging Face Transformers. The checkpoint is available at [hf.co/microsoft/speecht5_tts](https://huggingface.co/microsoft/speecht5_tts). An interactive demo is [available here](https://huggingface.co/spaces/Matthijs/speecht5-tts-demo). Also see [this Colab notebook](https://colab.research.google.com/drive/1i7I5pzBcU3WDFarDnzweIj4-sVVoIUFJ) on how to fine-tune SpeechT5 for TTS using Hugging Face.
 
 #### Training
 
