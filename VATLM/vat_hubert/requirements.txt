@@ -1,5 +1,5 @@
 python-speech-features==0.6
-scipy==1.5.4
+scipy==1.10.0
 opencv-python==4.5.4.60
 sentencepiece==0.1.96
 editdistance==0.6.0
