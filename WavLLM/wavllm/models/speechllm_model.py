@@ -221,7 +221,7 @@ class SpeechLLMModel(BaseFairseqModel):
     def build_audio_encoder(cls, cfg, task):
         if task.cfg.is_whisper:
             if not task.cfg.whisper_with_decoder:
-                cfg.whisper_path = "/modelblob/users/v-shujiehu/checkpoints/whisper-large-v2"
+                cfg.whisper_path = "openai/whisper-large-v2"
                 encoder = FairseqWhisperEncoder(cfg)
 
         pretraining_path = getattr(cfg, "load_pretrained_encoder_from", None)
@@ -247,7 +247,7 @@ class SpeechLLMModel(BaseFairseqModel):
 
     @classmethod
     def build_wavlm_encoder(cls, cfg, task):
-        cfg.wavlm_path = "/modelblob/users/v-shujiehu/checkpoints/wavlm-base"
+        cfg.wavlm_path = "microsoft/wavlm-base"
         encoder = FairseqWavLMEncoder(cfg)
         return encoder
 

@@ -86,7 +86,6 @@ class FairseqWhisperEncoder(FairseqEncoder):
     
     def __init__(self, args):
         super().__init__(None)
-        # whisper_path = "/modelblob/users/v-shujiehu/checkpoints/whisper-large-v2"
         self.model = WhisperEncoder.from_pretrained(args.whisper_path)
         self.config = self.model.config
 
@@ -96,7 +95,6 @@ class FairseqWhisperEncoder(FairseqEncoder):
         
         self.adapter = WhisperAdapter(1024, 512, "gelu")
         self.projector = nn.Linear(1024, 2048)
-        # self.subsample = Conv1dSubsampler(1280, 1280, 4096, [3, 3])
         self.subsample = Conv1dSubsampler(1280, 1280, 1024, [3, 3])
         apply_fsdp_checkpointing(self.model)
 
@@ -152,13 +150,7 @@ class FairseqWhisperEncoder(FairseqEncoder):
     def forward_torchscript(self, net_input):
         example_src_tokens = net_input.get("example_src_tokens")
         example_speech_masks = net_input.get("example_speech_masks")
-        if example_src_tokens is not None:
-            example_wav_n = [len(example_src_token) for example_src_token in example_src_tokens]
-            example_stacked_input = torch.stack([tensor for lst in example_src_tokens for tensor in lst])
-            example_stacked_mask = torch.stack([tensor for lst in example_speech_masks for tensor in lst])
-            example_audio_out = self.forward(example_stacked_input, example_stacked_mask)
-        else:
-            example_audio_out = None
+        example_audio_out = None
 
         src_tokens = net_input["src_tokens"]
         speech_masks = net_input["speech_masks"]
@@ -171,10 +163,7 @@ class FairseqWhisperEncoder(FairseqEncoder):
         audio_out = self.forward(stacked_input, stacked_mask)
 
         audio_out = self.split_wav_codec(audio_out, wav_n)
-        if example_src_tokens is not None:
-            example_audio_out = self.split_wav_codec(example_audio_out, example_wav_n)
-        else:
-            example_audio_out = None
+        example_audio_out = None
 
         return audio_out, example_audio_out
 
@@ -196,14 +185,6 @@ class WhisperEncoder(HFWhisperEncoder):
         config = WhisperConfig.from_pretrained(model_path)
 
         model = WhisperEncoder(config)
-        old_state_dict = torch.load(os.path.join(model_path, "pytorch_model.bin"))
-        state_dict = {}
-        for para_name in old_state_dict.keys():
-            if "model.encoder." in para_name:
-                new_name = para_name.replace("model.encoder.", "")
-                state_dict[new_name] = old_state_dict[para_name]
-        model.load_state_dict(state_dict)
-
         return model
 
     def forward(

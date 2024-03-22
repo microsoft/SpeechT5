@@ -118,7 +118,6 @@ class FairseqWavLMEncoder(FairseqEncoder):
         )
 
         src_lengths = attention_mask.sum(-1).to(torch.long)
-        # outputs = encoder_outputs[0]
         if self.wavlm_output_weight:
             norm_output_weights = F.softmax(self.output_weights, dim=0)
             weighted_output = [output * weight for output, weight in zip(encoder_outputs.hidden_states, norm_output_weights)]  
@@ -140,12 +139,7 @@ class FairseqWavLMEncoder(FairseqEncoder):
 
         example_wavlm_src_tokens = net_input.get("example_wavlm_src_tokens")
         example_wavlm_speech_masks = net_input.get("example_wavlm_speech_masks")
-        if example_wavlm_src_tokens is not None:
-            example_wavlm_input = torch.stack(example_wavlm_src_tokens, dim=0)
-            example_wavlm_speech_masks_input = torch.stack(example_wavlm_speech_masks, dim=0)
-            example_wavlm_audio_out = self.forward(src_tokens=example_wavlm_input, attention_mask=example_wavlm_speech_masks_input, prompt_embedding=prompt_embedding)
-        else:
-            example_wavlm_audio_out = None
+        example_wavlm_audio_out = None
     
         wavlm_src_tokens = net_input["wavlm_src_tokens"]
         wavlm_speech_masks = net_input["wavlm_speech_masks"]

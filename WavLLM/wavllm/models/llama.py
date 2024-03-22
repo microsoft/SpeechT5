@@ -608,24 +608,10 @@ class LLAMA(nn.Module):
                     if left_prompts is not None:
                         left_h = self.tok_embeddings(left_prompts)
                     h = self.tok_embeddings(prev_output_tokens)
-                    if speech_flag is not None and speech_flag[0] == False:
-                        pad_length = int(audio_out["encoder_out"].size(1))
-                        zeros_tensor = examples.new_zeros(pad_length)
-                        pad_tensor = self.tok_embeddings(zeros_tensor)
-                        # if speech_flag is False, replace audio embedding with text_padding embedding
-                        new_audio_out = torch.stack([torch.where(flag, audio, pad_tensor) for audio, flag in zip(audio_out["encoder_out"], speech_flag)])
-
-                        ## TODO: Move audio mask to the last of sequence
-                        if left_prompts is not None:
-                            h = torch.cat((left_h, new_audio_out, h), dim=1)
-                        else:
-                            h = torch.cat((new_audio_out, h), dim=1)
-                        # h = h
-                    else: 
-                        if left_prompts is not None:
-                            h = torch.cat((left_h, audio_out["encoder_out"], h), dim=1)
-                        else:
-                            h = torch.cat((audio_out["encoder_out"], h), dim=1)
+                    if left_prompts is not None:
+                        h = torch.cat((left_h, audio_out["encoder_out"], h), dim=1)
+                    else:
+                        h = torch.cat((audio_out["encoder_out"], h), dim=1)
                 else:
                     prev_output_tokens = prev_output_tokens[:, -1:]
                     if left_prompts is not None:
