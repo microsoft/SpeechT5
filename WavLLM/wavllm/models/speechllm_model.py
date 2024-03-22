@@ -24,11 +24,6 @@ from fairseq.models import (
     register_model,
     register_model_architecture,
 )
-from fairscale.nn.model_parallel.initialize import (
-    get_model_parallel_rank,
-    initialize_model_parallel,
-    model_parallel_is_initialized,
-)
 from fairseq.models.speech_to_text.hub_interface import S2THubInterface
 from fairseq.models.transformer import Embedding, TransformerDecoder
 from fairseq.modules import (

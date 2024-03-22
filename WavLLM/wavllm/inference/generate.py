@@ -29,6 +29,7 @@ from fairseq.logging.meters import StopwatchMeter, TimeMeter
 def main(cfg: DictConfig):
 
     if isinstance(cfg, Namespace):
+        print(cfg)
         cfg = convert_namespace_to_omegaconf(cfg)
 
     assert cfg.common_eval.path is not None, "--path required for generation!"

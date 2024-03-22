@@ -66,6 +66,9 @@ class CrossEntropyAccuracyCriterion(FairseqCriterion):
             ignore_index=self.padding_idx,
             reduction="sum" if reduce else "none",
         )
+        # if net_output[0][1] is not None:
+        #     cosine_loss = 1 - F.cosine_similarity(net_output[0][1], net_output[0][2], dim=-1).mean()
+        #     loss = loss + cosine_loss
         return loss, lprobs, target
 
     @staticmethod

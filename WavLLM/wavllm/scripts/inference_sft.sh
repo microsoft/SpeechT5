@@ -3,7 +3,7 @@ export HYDRA_FULL_ERROR=1
 export PYTHONPATH=$$PYTHONPATH:${PWD}
 
 model_path=$1
-[ -z $model_path ] && model_path=/modelblob/users/v-shujiehu/checkpoints/speechllm/speechllm_v0.1_whisper_llama2_chat_asr_continue_64_update_speechllm_v0.1_llama2_chat_asr_continue_64_update.yaml_8gpu_1accum/checkpoint1.pt
+[ -z $model_path ] && model_path="?"
 
 src_dir=${model_path%/*}
 cpt=${model_path##*/}
@@ -11,23 +11,20 @@ cpt=${cpt%.*}
 
 beam_size=$2
 gen_set=$3
-[ -z $gen_set ] && gen_set="alpaca_data_for_speechllm_dev_1000"
+[ -z $gen_set ] && gen_set="?"
 [ -z $beam_size ] && beam_size=1
 
 
-
-DATA_DIR=/valleblob/v-shujiehu/speechdata/LibriSpeech/for_llm/codec/speech_qa
-# DATA_DIR=/valleblob/v-shujiehu/multi-modal/data/alpaca_data
 FAIRSEQ_ROOT=${PWD}
+DATA_DIR=$FAIRSEQ_ROOT/../wavllm/test_data
 
 for subset in $gen_set; do
     results_path=$src_dir/decode_${cpt}_beam${beam_size}/${subset}
     [ ! -d $results_path ] && mkdir -p $results_path
 
-    #python $FAIRSEQ_ROOT/fairseq_cli/generate.py $DATA_DIR \
-    python $FAIRSEQ_ROOT/examples/speechllm/inference/generate.py $DATA_DIR \
-    --user-dir examples/speechllm \
-    --tokenizer-path /valleblob/v-shujiehu/nlp/model/llama/tokenizer.model \
+    python $FAIRSEQ_ROOT/../wavllm/inference/generate.py $DATA_DIR \
+    --user-dir ../wavllm \
+    --tokenizer-path $FAIRSEQ_ROOT/../wavllm/tokenizer/tokenizer.model \
     --gen-subset ${subset} \
     \
     --task speechllm_task \
