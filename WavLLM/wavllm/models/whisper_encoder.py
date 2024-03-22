@@ -19,7 +19,7 @@ from fairseq.models import (
     register_model,
     register_model_architecture,
 )
-from fairseq.models.speech_to_text.modules.convolution import Conv1dSubsampler
+from ..modules.convolution import Conv1dSubsampler
 from typing import Optional, Tuple, List
 from dataclasses import dataclass
 from sentencepiece import SentencePieceProcessor
