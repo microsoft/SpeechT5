@@ -1,0 +1,7 @@
+fairscale==0.4.13
+fairseq==0.12.2
+numpy==1.24.3
+omegaconf==2.0.6
+sentencepiece==0.1.99
+torch==2.0.1
+transformers==4.32.1
