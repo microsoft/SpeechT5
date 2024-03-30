@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	with_speech	tgt_text
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/CoT-task.wav	214437	First of all, transcribe the audio recording into text, capturing every spoken word; Additionally given this audio clip and text, can you condense it into a clear, concise summary, no more than 20 words?; Lastly disregarding the sound, translate this English summary into German.	True	Drei Filme aus dem asiatisch-pazifischen Raum im Rennen in Cannes

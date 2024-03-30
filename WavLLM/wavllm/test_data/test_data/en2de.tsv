@@ -1,2 +1,0 @@
-id	audio	n_frames	tgt_text	prompt	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/st.flac	34560	Sie wird schon in Ordnung sein.	Translate the audio clip into German.	True

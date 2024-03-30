@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	tgt_text	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/sv.wav	351362	Is there only one speaker in the audio clip?	Yes	True

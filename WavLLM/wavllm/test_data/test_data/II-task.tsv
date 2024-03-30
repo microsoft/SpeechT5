@@ -1,2 +1,0 @@
-id	audio	n_frames	with_speech	prompt	tgt_text
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/II-task.wav	111111	True	To begin, Transcribe the audio recording into text, capturing every spoken word; Subsequently, How does the woman finally decide to go home? A. By bus; B. In the man’s car; C. In her father’s car.; Furthermore, ignore the audio clip, What is the capital of New Zealand?; Lastly, Continue the narrative of given audio clip in a coherent and engaging way	ASR+SQA+SFT+Continue

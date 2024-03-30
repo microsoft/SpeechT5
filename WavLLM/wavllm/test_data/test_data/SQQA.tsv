@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	tgt_text	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/sqqa.wav	182574		The fundamental theorem of calculus is a theorem that links the concept of the derivative of a function with the concept of the integral .	True

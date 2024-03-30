@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	tgt_text	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/sqa.wav	111111	What will the man do next? A. Start to take exercise; B. Do as he always does; C. Change his working time.	A	True

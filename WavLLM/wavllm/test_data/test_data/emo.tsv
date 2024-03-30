@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	tgt_text	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/emo.wav	12345	Can you describe the emotional condition of the speaker in the provided audio clip?	sad	True

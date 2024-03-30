@@ -1,2 +1,0 @@
-id	audio	n_frames	prompt	tgt_text	with_speech
-0	SpeechT5/WavLLM/fairseq/examples/wavllm/test_data/audio/asr.flac	166960	Based on the attached audio, generate a comprehensive text transcription of the spoken content.	he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce	True
