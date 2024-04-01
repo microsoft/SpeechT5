@@ -3,13 +3,13 @@
 ## Model
 to get the WavLLM model, run
 ```bash
-bash ./download/download.sh
+bash ./download/download.sh 0
 ```
 
 ## Gaokao (SQA)
 The audio samples and transcripts can be download using
 ```bash
-bash ./download/download.sh
+bash ./download/download.sh 1
 ```
 
 The tsv file path of SQA task is [`tsv_path`](wavllm/test_data/gaokao.tsv).
