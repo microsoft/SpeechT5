@@ -10,7 +10,7 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**SpeechUT**](https://arxiv.org/abs/2210.03730) (```EMNLP 2022```): **SpeechUT: Bridging Speech and Text with Hidden-Unit for Encoder-Decoder Based Speech-Text Pre-training**
 
-> [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```Arxiv 2022```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
+> [**SpeechLM**](https://arxiv.org/abs/2209.15329) (```IEEE/ACM TASLP```): **SpeechLM: Enhanced Speech Pre-Training with Unpaired Textual Data**
 
 > [**Speech2S**](https://arxiv.org/abs/2210.17027) (```ICASSP 2023```): **Joint Pre-Training with Speech and Bilingual Text for Direct Speech to Speech Translation**
 
@@ -22,11 +22,15 @@ Unified-modal speech-text pre-training for spoken language processing:
 
 > [**VioLA**](https://arxiv.org/abs/2305.16107) (```Arxiv 2023```): **VioLA: Unified Codec Language Models for Speech Recognition, Synthesis, and Translation**
 
+> [**WavLLM**](https://arxiv.org/abs/2404.00656) (```Arxiv 2024```): **WavLLM: Towards Robust and Adaptive Speech Large Language Model**
+
 <!-- Model introductions, evaluation results, and model inference instructions are located in the corresponding folders. The source code is [https://github.com/microsoft/SpeechT5/tree/main/ModelName]. -->
 
 
 ## Update
 
+- April, 2024: WavLLM [**Arxiv**](https://arxiv.org/abs/2404.00656).
+- March, 2024: [**SpeechLM**](https://arxiv.org/abs/2209.15329) was accepted by IEEE/ACM Transactions on Audio, Speech, and Language Processing.
 - May, 2023: VioLA [**Arxiv**](https://arxiv.org/abs/2305.16107).
 - May, 2023: [**VATLM**](https://arxiv.org/abs/2211.11275) was accepted by IEEE Transactions on Multimedia.
 - March, 2023: VALL-E X [**Arxiv**](https://arxiv.org/abs/2303.03926) and [**Demo**](https://aka.ms/vallex).
